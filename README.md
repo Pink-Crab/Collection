@@ -1,23 +1,41 @@
 # PinkCrab Collection #
 
-Welcome to the core package of the PinkCrab **Perique** plugin framework, formally known as just the PinkCrab Plugin Framwework. 
-
 ![alt text](https://img.shields.io/badge/Current_Version-0.1.0-yellow.svg?style=flat " ") 
 [![Open Source Love](https://badges.frapsoft.com/os/mit/mit.svg?v=102)]()
 ![](https://github.com/Pink-Crab/Framework__core/workflows/GitHub_CI/badge.svg " ")
 [![codecov](https://codecov.io/gh/Pink-Crab/Framework__core/branch/master/graph/badge.svg?token=VW566UL1J6)](https://codecov.io/gh/Pink-Crab/Framework__core)
 
-
-For more details please visit our docs.
-https://app.gitbook.com/@glynn-quelch/s/pinkcrab/
-
-
 ## Version 0.1.0 ##
+
+> This library was extracted from the PinkCrab Plugin Framework (Perique)
 
 
 ## Why? ##
 
-Perqiue gives you access to an extendable Collection which can be used in place of arrays throughout your application. Can even be configured to only accept a specific type, making simple generic collections a possibility.
+Often you find yourself needing to create a simple collection, with a few generic methods like map, filter, sort etc. 
+
+## Install ##
+
+> `composer install pink-crab/collection`
+
+## Basic Useage ##
+
+See the docs for the full list of methods.
+
+```php
+$collection = new Collection(['1',2,'3']);
+$collection->push(4);
+$collection->apply(fn($e) => (string) $e);
+var_dump($collection); // ['1','2','3','4'];
+```
+****
+```php
+$collection = new Collection([1,2,3,4,5,6,7,8,9,10]);
+$collection->filter(fn($e) => $e % 2 == 0);
+var_dump($collection); // [2,4,6,8,10];
+```
+
+## Typed & Mapped Collections
 
 ```php 
 <?php
