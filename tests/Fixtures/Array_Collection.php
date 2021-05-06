@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 /**
- * Collection mock using the Sequence trait.
+ * Collection mock using the Indexed & ArrayAccess_Aware trait.
  *
  * @since 0.1.0
  * @author Glynn Quelch <glynn.quelch@gmail.com>
@@ -12,9 +12,11 @@ declare(strict_types=1);
 
 namespace PinkCrab\Collection\Tests\Fixtures;
 
+use ArrayAccess;
 use PinkCrab\Collection\Collection;
-use PinkCrab\Collection\Traits\Sequence;
+use PinkCrab\Collection\Traits\Indexed;
+use PinkCrab\Collection\Traits\ArrayAccess_Aware;
 
-class Sequence_Collection extends Collection {
-	use Sequence;
+class Array_Collection extends Collection implements ArrayAccess {
+	use Indexed, ArrayAccess_Aware;
 }

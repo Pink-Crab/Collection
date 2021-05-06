@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * Collection mock using the JsonSerializable trait.
  *
- * @since 0.2.0
+ * @since 0.1.0
  * @author Glynn Quelch <glynn.quelch@gmail.com>
  * @license http://www.opensource.org/licenses/mit-license.html  MIT License
  * @package PinkCrab\Collection
