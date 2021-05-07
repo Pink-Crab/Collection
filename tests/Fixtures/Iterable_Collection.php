@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 /**
- * Collection mock using the Sequence trait.
+ * Collection mock using the Indexed & Is_Iterable
  *
  * @since 0.1.0
  * @author Glynn Quelch <glynn.quelch@gmail.com>
@@ -12,9 +12,12 @@ declare(strict_types=1);
 
 namespace PinkCrab\Collection\Tests\Fixtures;
 
+use Iterator;
+use ArrayAccess;
 use PinkCrab\Collection\Collection;
-use PinkCrab\Collection\Traits\Sequence;
+use PinkCrab\Collection\Traits\Indexed;
+use PinkCrab\Collection\Traits\Is_Iterable;
 
-class Sequence_Collection extends Collection {
-	use Sequence;
+class Iterable_Collection extends Collection implements Iterator {
+	use Indexed, Is_Iterable;
 }
