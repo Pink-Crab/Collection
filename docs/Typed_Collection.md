@@ -14,8 +14,7 @@ class WP_Post_Collection extends Collection {
   use Indexed;
 
   /**
-   * Overwrite this method in any extended classes, to modify the inital data.
-   *
+   * Filters out all none WP_Post instances.
    * @param array<int|string, mixed> $data
    * @return array<int|string, mixed>
    */
@@ -37,6 +36,11 @@ This will also work when pushing and unshifting items to the collection.
 ```php
 class String_Collection extends Collection {
 
+  /**
+   * Only allow valid strings.
+   * @param array<int|string, mixed> $data
+   * @return array<int|string, mixed>
+   */
   protected function map_construct( array $data ): array {
     return array_filter($data, function($e): bool{
       return is_string($e);

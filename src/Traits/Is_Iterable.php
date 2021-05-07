@@ -47,7 +47,7 @@ trait Is_Iterable {
 	/**
 	 * Returns the current element key
 	 *
-	 * @return void
+	 * @return string|int
 	 */
 	public function key() {
 		return key( $this->data );
@@ -56,7 +56,7 @@ trait Is_Iterable {
 	/**
 	 * Returns the next element
 	 *
-	 * @return void
+	 * @return mixed|false
 	 */
 	public function next() {
 		return next( $this->data );
@@ -65,7 +65,7 @@ trait Is_Iterable {
 	/**
 	 * Chekcks if the current pointer is valid
 	 *
-	 * @return bool
+	 * @return int|string|null
 	 */
 	public function valid() {
 		return key( $this->data ) !== null;
