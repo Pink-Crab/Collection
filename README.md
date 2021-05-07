@@ -12,7 +12,7 @@
 
 ## Why? ##
 
-Often you find yourself needing to create a simple collection, with a few generic methods like map, filter, sort etc. 
+Give access to a basic collection with all expected functionlaity, filtering, mapping, folding, sorting and comparing. But is also extendable for creating custom collections, which can be expanded and typed. A fairly simple, but extendable Collection. 
 
 ## Install ##
 
@@ -20,7 +20,7 @@ Often you find yourself needing to create a simple collection, with a few generi
 
 ## Basic Useage ##
 
-See the docs for the full list of methods.
+> See [`./docs`](./docs) for more details and examples.
 
 ```php
 $collection = new Collection(['1',2,'3']);
@@ -47,9 +47,19 @@ $indexed_collection = new class() extends \PinkCrab\Collection\Collection {
 $indexed_collection->set( 'key1', 'value1' );
 $indexed_collection->has( 'key1' ); //true
 var_dump( $indexed_collection );
+
+
+// As a full class.
+class Indexed_Collection extends \PinkCrab\Collection\Collection {
+	use \PinkCrab\Collection\Traits\Indexed;
+};
+
+$indexed_collection = new Indexed_Collection();
+$indexed_collection->set( 'key1', 'value1' );
+$indexed_collection->has( 'key1' ); //true
+var_dump( $indexed_collection );
+
 ```
-
-
 
 ## Typed & Mapped Collections
 
