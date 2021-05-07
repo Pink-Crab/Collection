@@ -45,26 +45,30 @@ var_dump(isset($collection[0])); // True
 
 The following methods are required to satisify the ArrayAccess interface.
 
-### Has_ArrayAccess::offsetSet\( $offset, $value )
+### Has_ArrayAccess  
+public function offsetSet\( $offset, $value )
 > @param string|int $offset  
 > @param mixed $value  
 > @return void  
 
 Sets the value passed to either the offset defined or pushed to the end if no offset defined. 
 
-### Has_ArrayAccess::offsetExists\( $offset )
+### Has_ArrayAccess  
+public function offsetExists\( $offset )
 > @param string|int $offset  
 > @return bool   
 
 Used for isset() and checks if the defined offset exists.
 
-### Has_ArrayAccess::offsetUnset\( $offset )
+### Has_ArrayAccess  
+public function offsetUnset\( $offset )
 > @param string|int $offset  
 > @return void  
 
 Used to unset() an offset.
 
-### Has_ArrayAccess::offsetGet\( $offset )
+### Has_ArrayAccess  
+public function offsetGet\( $offset )
 > @param string|int $offset  
 > @return mixed|null  
 
