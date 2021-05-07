@@ -33,7 +33,15 @@ This provides additional methods for using the collection as a key =&gt; value d
 
 ### Has_ArrayAccess
 
-> PinkCrab\Collection\Traits\Indexed
+> PinkCrab\Collection\Traits\Has_ArrayAccess
+
+Combined with the ArrayAccess interface, this will give full array access to the collection.
+
+* [has\(\)](./trait-indexed#indexed-has)
+* [get\(\)](./trait-indexed#indexed-get)
+* [set\(\)](./trait-indexed#indexed-set)
+* [find\(\)](./trait-indexed#indexed-find)
+* [remove\(\)](./trait-indexed#indexed-remove)
 
 
 
