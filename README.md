@@ -35,6 +35,22 @@ $collection->filter(fn($e) => $e % 2 == 0);
 var_dump($collection); // [2,4,6,8,10];
 ```
 
+## Extendable Traits
+
+The Collection package comes with a few Traits which can be used when creating custom collections. These can either be created on the fly using anonymous classes or through defining them as full classes.
+
+```php
+$indexed_collection = new class() extends \PinkCrab\Collection\Collection {
+	use \PinkCrab\Collection\Traits\Indexed;
+};
+
+$indexed_collection->set( 'key1', 'value1' );
+$indexed_collection->has( 'key1' ); //true
+var_dump( $indexed_collection );
+```
+
+
+
 ## Typed & Mapped Collections
 
 ```php 

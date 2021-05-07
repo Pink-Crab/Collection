@@ -25,11 +25,17 @@ This provides additional methods, for working with your collection as a sequence
 
 This provides additional methods for using the collection as a key =&gt; value data store. Still uses an array under the hood, so only alphanumerical values can be used as keys.
 
-* [has\(\)](./untitled#indexed-has)
-* [get\(\)](./untitled#indexed-get)
-* [set\(\)](./untitled#indexed-set)
-* [find\(\)](./untitled#indexed-find)
-* [remove\(\)](./untitled#indexed-remove)
+* [has\(\)](./trait-indexed#indexed-has)
+* [get\(\)](./trait-indexed#indexed-get)
+* [set\(\)](./trait-indexed#indexed-set)
+* [find\(\)](./trait-indexed#indexed-find)
+* [remove\(\)](./trait-indexed#indexed-remove)
+
+### Has_ArrayAccess
+
+> PinkCrab\Collection\Traits\Indexed
+
+
 
 
 
