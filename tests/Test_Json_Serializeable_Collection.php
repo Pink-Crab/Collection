@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 /**
- * tests the JsonSerializeable interface on collections.
+ * tests the Is_JsonSerializableable interface on collections.
  *
  * @since 0.1.0
  * @author Glynn Quelch <glynn.quelch@gmail.com>

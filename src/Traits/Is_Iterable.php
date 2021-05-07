@@ -3,7 +3,7 @@
 declare(strict_types=1);
 /**
  *
- * Adds in a selection of methods for using a collection as a sequence.
+ * Adds the required methods to make a collection Iterable.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -25,51 +25,49 @@ declare(strict_types=1);
 
 namespace PinkCrab\Collection\Traits;
 
-trait ArrayAccess_Aware {
-
+trait Is_Iterable {
 	/**
-	 * Sets a value based on the offset passed.
+	 * Rewind the pointer
 	 *
-	 * @param string|int $offset
-	 * @param mixed $value
 	 * @return void
 	 */
-	public function offsetSet( $offset, $value ) {
-
-		if ( is_null( $offset ) ) {
-			$this->data[] = $value;
-		} else {
-			$this->data[ $offset ] = $value;
-		}
+	public function rewind() {
+		return reset( $this->data );
 	}
 
 	/**
-	 * Checks if an offset exists
+	 * Returns the current element
 	 *
-	 * @param string|int $offset
+	 * @return mixed
+	 */
+	public function current() {
+		return current( $this->data );
+	}
+
+	/**
+	 * Returns the current element key
+	 *
+	 * @return void
+	 */
+	public function key() {
+		return key( $this->data );
+	}
+
+	/**
+	 * Returns the next element
+	 *
+	 * @return void
+	 */
+	public function next() {
+		return next( $this->data );
+	}
+
+	/**
+	 * Chekcks if the current pointer is valid
+	 *
 	 * @return bool
 	 */
-	public function offsetExists( $offset ) {
-		return isset( $this->data[ $offset ] );
-	}
-
-	/**
-	 * Unsets an off set
-	 *
-	 * @param string|int $offset
-	 * @return void
-	 */
-	public function offsetUnset( $offset ) {
-		unset( $this->data[ $offset ] );
-	}
-
-	/**
-	 * Gets the value at the defined offset.
-	 *
-	 * @param string|int $offset
-	 * @return mixed|null
-	 */
-	public function offsetGet( $offset ) {
-		return isset( $this->data[ $offset ] ) ? $this->data[ $offset ] : null;
+	public function valid() {
+		return key( $this->data ) !== null;
 	}
 }

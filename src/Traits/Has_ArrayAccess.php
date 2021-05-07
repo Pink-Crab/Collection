@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 /**
- * JSON Serialise trait.
  *
- * Give any collection the means to be json_encoded()
+ * Adds in a selection of methods for using a collection as a sequence.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -21,22 +20,56 @@ declare(strict_types=1);
  * @author Glynn Quelch <glynn.quelch@gmail.com>
  * @license http://www.opensource.org/licenses/mit-license.html  MIT License
  * @package PinkCrab\Collection
+ * @phpcs:disable WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid, conforms to ArrayAccess interface
  */
 
 namespace PinkCrab\Collection\Traits;
 
-trait JsonSerialize {
-
+trait Has_ArrayAccess {
 
 	/**
-	 * Returns a representation that can be natively converted to JSON, which is
-	 * called when invoking json_encode.
+	 * Sets a value based on the offset passed.
 	 *
-	 * @return mixed
-	 *
-	 * @see \JsonSerializable
+	 * @param string|int $offset
+	 * @param mixed $value
+	 * @return void
 	 */
-	public function jsonSerialize() {
-		return $this->data;
+	public function offsetSet( $offset, $value ) {
+
+		if ( is_null( $offset ) ) {
+			$this->data[] = $value;
+		} else {
+			$this->data[ $offset ] = $value;
+		}
+	}
+
+	/**
+	 * Checks if an offset exists
+	 *
+	 * @param string|int $offset
+	 * @return bool
+	 */
+	public function offsetExists( $offset ) {
+		return isset( $this->data[ $offset ] );
+	}
+
+	/**
+	 * Unsets an off set
+	 *
+	 * @param string|int $offset
+	 * @return void
+	 */
+	public function offsetUnset( $offset ) {
+		unset( $this->data[ $offset ] );
+	}
+
+	/**
+	 * Gets the value at the defined offset.
+	 *
+	 * @param string|int $offset
+	 * @return mixed|null
+	 */
+	public function offsetGet( $offset ) {
+		return isset( $this->data[ $offset ] ) ? $this->data[ $offset ] : null;
 	}
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 /**
- * Base collection tests.
+ * Tests for collection which uses Indexed triat.
  *
  * @since 0.1.0
  * @author Glynn Quelch <glynn.quelch@gmail.com>
@@ -12,9 +12,8 @@ declare(strict_types=1);
 
 namespace PinkCrab\Core\Tests\Collection;
 
-use stdClass;
-use PHPUnit\Framework\TestCase;
 use OutOfRangeException;
+use PHPUnit\Framework\TestCase;
 use PinkCrab\Collection\Tests\Fixtures\Indexed_Collection;
 
 class Test_Indexed_Collection_Trait extends TestCase {

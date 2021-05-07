@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 /**
- * Collection mock using the JsonSerializable trait.
+ * Collection mock using the Indexed & Is_Iterable
  *
  * @since 0.1.0
  * @author Glynn Quelch <glynn.quelch@gmail.com>
@@ -12,10 +12,12 @@ declare(strict_types=1);
 
 namespace PinkCrab\Collection\Tests\Fixtures;
 
-use JsonSerializable;
+use Iterator;
+use ArrayAccess;
 use PinkCrab\Collection\Collection;
-use PinkCrab\Collection\Traits\Is_JsonSerializable;
+use PinkCrab\Collection\Traits\Indexed;
+use PinkCrab\Collection\Traits\Is_Iterable;
 
-class Json_Serializeable_Collection extends Collection implements JsonSerializable {
-	use Is_JsonSerializable;
+class Iterable_Collection extends Collection implements Iterator {
+	use Indexed, Is_Iterable;
 }

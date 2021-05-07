@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 /**
- * Collection mock using the Indexed & ArrayAccess_Aware trait.
+ * Collection mock using the Indexed & Has_ArrayAccess trait.
  *
  * @since 0.1.0
  * @author Glynn Quelch <glynn.quelch@gmail.com>
@@ -15,8 +15,8 @@ namespace PinkCrab\Collection\Tests\Fixtures;
 use ArrayAccess;
 use PinkCrab\Collection\Collection;
 use PinkCrab\Collection\Traits\Indexed;
-use PinkCrab\Collection\Traits\ArrayAccess_Aware;
+use PinkCrab\Collection\Traits\Has_ArrayAccess;
 
 class Array_Collection extends Collection implements ArrayAccess {
-	use Indexed, ArrayAccess_Aware;
+	use Indexed, Has_ArrayAccess;
 }
