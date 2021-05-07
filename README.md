@@ -2,8 +2,8 @@
 
 ![alt text](https://img.shields.io/badge/Current_Version-0.1.0-yellow.svg?style=flat " ") 
 [![Open Source Love](https://badges.frapsoft.com/os/mit/mit.svg?v=102)]()
-![](https://github.com/Pink-Crab/Framework__core/workflows/GitHub_CI/badge.svg " ")
-[![codecov](https://codecov.io/gh/Pink-Crab/Framework__core/branch/master/graph/badge.svg?token=VW566UL1J6)](https://codecov.io/gh/Pink-Crab/Framework__core)
+![](https://github.com/Pink-Crab/Collection/workflows/GitHub_CI/badge.svg " ")
+[![codecov](https://codecov.io/gh/Pink-Crab/collection/branch/master/graph/badge.svg?token=6tUeia2v2S)](https://codecov.io/gh/Pink-Crab/collection)
 
 ## Version 0.1.0 ##
 
