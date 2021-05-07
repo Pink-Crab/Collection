@@ -9,7 +9,6 @@
 
 > This library was extracted from the PinkCrab Plugin Framework (Perique)
 
-
 ## Why? ##
 
 Give access to a basic collection with all expected functionlaity, filtering, mapping, folding, sorting and comparing. But is also extendable for creating custom collections, which can be expanded and typed. A fairly simple, but extendable Collection. 
@@ -86,9 +85,8 @@ $collection->each(function($e){
 
 ## License ##
 
-### MIT License ###
-http://www.opensource.org/licenses/mit-license.html  
+#### MIT License http://www.opensource.org/licenses/mit-license.html  
 
 ## Change Log ##
-* 0.1.0 - 
+* 0.1.0 - Added Has_ArrayAccess and Is_Iterable traits to allow the implementation of the interfaces. Added docs from existing GitBook repo.
 * 0.0.0 - Extracted from the PinkCrab Plugin Framework as a standalone package.

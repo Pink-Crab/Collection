@@ -29,7 +29,7 @@ trait Is_Iterable {
 	/**
 	 * Rewind the pointer
 	 *
-	 * @return void
+	 * @return mixed|null
 	 */
 	public function rewind() {
 		return reset( $this->data );
@@ -65,7 +65,7 @@ trait Is_Iterable {
 	/**
 	 * Chekcks if the current pointer is valid
 	 *
-	 * @return int|string|null
+	 * @return bool
 	 */
 	public function valid() {
 		return key( $this->data ) !== null;
