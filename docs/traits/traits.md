@@ -37,13 +37,9 @@ This provides additional methods for using the collection as a key =&gt; value d
 
 Combined with the ArrayAccess interface, this will give full array access to the collection.
 
-* [has\(\)](./trait-has_arrayaccess.md#Has_ArrayAccess)
-* [get\(\)](./trait-has_arrayaccess.md#indexed-get)
-* [set\(\)](./trait-has_arrayaccess.md#indexed-set)
-* [find\(\)](./trait-has_arrayaccess.md#indexed-find)
-* [remove\(\)](./trait-has_arrayaccess.md#indexed-remove)
+* [offsetSet\(\)](./trait-has_arrayaccess.md#offsetSet)
+* [offsetExists\(\)](./trait-has_arrayaccess.md#offsetExists-get)
+* [offsetUnset\(\)](./trait-has_arrayaccess.md#offsetUnset)
+* [offsetGet\(\)](./trait-has_arrayaccess.md#offsetGet)
 
-
-
-trait-has_arrayaccess
 
