@@ -42,3 +42,15 @@ Combined with the ArrayAccess interface, this will give full array access to the
 * [offsetUnset\(\)](./trait-has_arrayaccess.md#offsetUnset-offset-)
 * [offsetGet\(\)](./trait-has_arrayaccess.md#offsetGet-offset-)
 
+### Is_Iterable
+
+> PinkCrab\Collection\Traits\Is_Iterable
+
+Combined with the Iterable interface, this allow while and foreach loops to be proformed on the collection.
+
+* [rewind\(\)](./trait-is_iterable.md#rewind)
+* [current\(\)](./trait-is_iterable.md#current)
+* [key\(\)](./trait-is_iterable.md#key)
+* [next\(\)](./trait-is_iterable.md#next)
+* [valid\(\)](./trait-is_iterable.md#valid)
+

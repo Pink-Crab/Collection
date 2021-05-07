@@ -19,7 +19,7 @@ class Array_Collection extends Collection implements ArrayAccess {
 }
 ```
 
-The trait only has a single method Is_JsonSerializable\(\) and this shouldnt really be called manually, although all it does is returns the data as an array to be JSON encoded.
+We can now use the collection as an array, with access to many of php native array functions.
 
 ```php
 $collection = new Array_Collection();
