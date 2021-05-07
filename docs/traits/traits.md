@@ -37,9 +37,8 @@ This provides additional methods for using the collection as a key =&gt; value d
 
 Combined with the ArrayAccess interface, this will give full array access to the collection.
 
-* [offsetSet\(\)](./trait-has_arrayaccess.md#offsetSet)
-* [offsetExists\(\)](./trait-has_arrayaccess.md#offsetExists-get)
-* [offsetUnset\(\)](./trait-has_arrayaccess.md#offsetUnset)
-* [offsetGet\(\)](./trait-has_arrayaccess.md#offsetGet)
-
+* [offsetSet\(\)](./trait-has_arrayaccess.md#offsetget-offset-)
+* [offsetExists\(\)](./trait-has_arrayaccess.md#offsetExists-offset-)
+* [offsetUnset\(\)](./trait-has_arrayaccess.md#offsetUnset-offset-)
+* [offsetGet\(\)](./trait-has_arrayaccess.md#offsetGet-offset-)
 
