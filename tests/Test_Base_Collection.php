@@ -12,11 +12,15 @@ declare(strict_types=1);
 
 namespace PinkCrab\Core\Tests\Collection;
 
+use Collator;
+use stdClass;
 use TypeError;
 use UnderflowException;
 use PHPUnit\Framework\TestCase;
 use PinkCrab\Collection\Collection;
+use PinkCrab\Collection\Tests\Fixtures\Type_A;
 use PinkCrab\Collection\Tests\Fixtures\Sample_Class;
+use PinkCrab\Collection\Tests\Fixtures\Typed_Collection;
 
 class Test_Base_Collection extends TestCase {
 
@@ -591,5 +595,89 @@ class Test_Base_Collection extends TestCase {
 		$this->expectException( TypeError::class );
 		$collection = Collection::from( array( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ) );
 		$collection->intersect( 'IM NOT AN ARRAY OR COLLECTION' );
+	}
+
+	/**
+	 * Test that collection can be grouped into sub collections
+	 *
+	 * @return void
+	 */
+	public function test_group_by_into_sub_collections(): void {
+
+		$collection = new Collection( array( '1', 2, 3.4, 'string', array( 'array' ), null, true ) );
+
+		$collection = $collection->group_by(
+			// Returns 'NUMERICAL' or 'NOT NUMERICAL'
+			function( $data ):string {
+				return \is_numeric( $data ) ? 'NUMERICAL' : 'NOT NUMERICAL';
+			}
+		);
+
+		// Cast as an array for easier checking.
+		$as_array = $collection->to_array();
+
+		// Check the array has 2 keys.
+		$this->assertCount( 2, $as_array );
+		$this->assertArrayHasKey( 'NUMERICAL', $as_array );
+		$this->assertArrayHasKey( 'NOT NUMERICAL', $as_array );
+
+		// Check both are collections
+		$this->assertInstanceOf( Collection::class, $as_array['NUMERICAL'] );
+		$this->assertInstanceOf( Collection::class, $as_array['NOT NUMERICAL'] );
+
+		// Check NUMERICAL array contains the 3 values: '1', 2, 3.4
+		$this->assertCount( 3, $as_array['NUMERICAL'] );
+		$this->assertTrue( $as_array['NUMERICAL']->contains( '1' ) );
+		$this->assertTrue( $as_array['NUMERICAL']->contains( 2 ) );
+		$this->assertTrue( $as_array['NUMERICAL']->contains( 3.4 ) );
+
+		// Check NOT NUMERICAL array contains the 4 values: 'string', array( ), null, true
+		$this->assertCount( 3, $as_array['NOT NUMERICAL'] );
+		$this->assertTrue( $as_array['NOT NUMERICAL']->contains( 'string' ) );
+		$this->assertTrue( $as_array['NOT NUMERICAL']->contains( array() ) );
+		$this->assertTrue( $as_array['NOT NUMERICAL']->contains( null ) );
+		$this->assertTrue( $as_array['NOT NUMERICAL']->contains( true ) );
+	}
+
+	/**
+	 * When grouping a collection, the parent collection should implement Indexed, while the
+	 * group nodes should be clones of the original.
+	 *
+	 * @return void
+	 */
+	public function test_group_by_uses_same_collection_type_for_groups() {
+		// Mock data.
+		$a_1        = new Type_A();
+		$a_1->value = 1;
+
+		$a_2        = new Type_A();
+		$a_2->value = 2;
+
+		$a_3        = new Type_A();
+		$a_3->value = 3;
+
+		$a_4        = new Type_A();
+		$a_4->value = 4;
+
+		$inital  = new Typed_Collection( array( $a_1, $a_2, $a_3, $a_4 ) );
+		$grouped = $inital->group_by(
+			// Returns 'EVEN' or 'ODD' based on the value property.
+			function( $data ):string {
+				return $data->value % 2 === 0 ? 'EVEN' : 'ODD';
+			}
+		);
+
+		// Check grouped uses the Indexed trait.
+		$this->assertContains( Indexed::class, \class_uses( $inital ) );
+
+		// Check all even values are held in Type_Collection.
+		$this->assertInstanceOf( Typed_Collection::class, $grouped->get( 'EVEN' ) );
+		$this->assertContains( $a_2, $grouped->get( 'EVEN' )->to_array() );
+		$this->assertContains( $a_4, $grouped->get( 'EVEN' )->to_array() );
+
+		// Check all odd values are held in Type_Collection.
+		$this->assertInstanceOf( Typed_Collection::class, $grouped->get( 'ODD' ) );
+		$this->assertContains( $a_1, $grouped->get( 'ODD' )->to_array() );
+		$this->assertContains( $a_3, $grouped->get( 'ODD' )->to_array() );
 	}
 }
