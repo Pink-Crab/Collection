@@ -28,6 +28,7 @@ namespace PinkCrab\Collection;
 use Countable;
 use TypeError;
 use UnderflowException;
+use PinkCrab\Collection\Helpers\Comparisons;
 
 class Collection implements Countable {
 
@@ -315,44 +316,66 @@ class Collection implements Countable {
 	/**
 	 * Returns a new collection of differences between another collection or array.
 	 *
+	 * Optional comparison function can be passed to use array_uidiff over array_idiff (if no callback)
+	 *
 	 * @param array<int|string, mixed>|Collection $data
+	 * @param callable|null $comparator The Comparison function to use.
 	 * @return self
 	 * @throws TypeError
 	 */
-	public function diff( $data ):self {
+	public function diff( $data, ?callable $comparator = null ):self {
 
 		if ( ! is_array( $data ) && ! is_a( $data, static::class ) ) {
-			throw new \TypeError( 'Can only merge with other Collections or Arrays.' );
+			throw new \TypeError( 'Can only find the diff with other Collections or Arrays.' );
 		}
 
-		return new static(
-			array_diff(
-				$this->data,
-				is_object( $data ) && is_a( $data, static::class ) ? $data->to_array() : $data
-			)
-		);
+		$data = is_object( $data ) && is_a( $data, static::class ) ? $data->to_array() : $data;
+
+		$new_data = $this->contains_array_or_object( (array) $this->data ) || $this->contains_array_or_object( (array) $data )
+			? \array_udiff( $this->data, $data, $comparator ?? Comparisons::by_instances() )
+			: array_diff( $this->data, $data );
+
+		return new static( $new_data );
 	}
 
 	/**
 	 * Returns a collection of same values from another array or collection.
 	 *
+	 * Optional comparison function can be passed to use array_uintersect over array_intersect (if no callback)
+	 *
 	 * @param array<int|string, mixed>|Collection $data
+	 * @param callable|null $comparator The Comparison function to use.
 	 * @return self
+	 * @throws TypeError
 	 */
-	public function intersect( $data ):self {
+	public function intersect( $data, ?callable $comparator = null ):self {
 
 		if ( ! is_array( $data ) && ! is_a( $data, static::class ) ) {
-			throw new \TypeError( 'Can only merge with other Collections or Arrays.' );
+			throw new \TypeError( 'Can only intersection with other Collections or Arrays.' );
 		}
 
-		return new static(
-			array_intersect(
-				$this->data,
-				is_object( $data ) && is_a( $data, static::class ) ? $data->to_array() : $data
-			)
-		);
+		$data = is_object( $data ) && is_a( $data, static::class ) ? $data->to_array() : $data;
+
+		$new_data = $this->contains_array_or_object( (array) $this->data ) || $this->contains_array_or_object( (array) $data )
+			? \array_uintersect( $this->data, $data, $comparator ?? Comparisons::by_instances() )
+			: \array_intersect( $this->data, $data );
+
+		return new static( $new_data );
 	}
 
-
+	/**
+	 * Checks if the passed array has arrays or objects in them.
+	 *
+	 * @param array<int|string, mixed> $data
+	 * @return bool
+	 */
+	protected function contains_array_or_object( array $data ): bool {
+		foreach ( $data as $datum ) {
+			if ( \is_array( $datum ) || \is_object( $datum ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 }
