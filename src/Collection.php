@@ -316,7 +316,8 @@ class Collection implements Countable {
 	/**
 	 * Returns a new collection of differences between another collection or array.
 	 *
-	 * Optional comparison function can be passed to use array_uidiff over array_idiff (if no callback)
+	 * Optional comparison function can be passed to use array_udiff over array_diff if either data contains
+	 * objects. If no $comparator function passed, will match objects by instance (not values.)
 	 *
 	 * @param array<int|string, mixed>|Collection $data
 	 * @param callable|null $comparator The Comparison function to use.
@@ -341,7 +342,8 @@ class Collection implements Countable {
 	/**
 	 * Returns a collection of same values from another array or collection.
 	 *
-	 * Optional comparison function can be passed to use array_uintersect over array_intersect (if no callback)
+	 * Optional comparison function can be passed to use array_uintersect over array_intersect if either data contains
+	 * objects. If no $comparator function passed, will match objects by instance (not values.)
 	 *
 	 * @param array<int|string, mixed>|Collection $data
 	 * @param callable|null $comparator The Comparison function to use.
@@ -366,6 +368,7 @@ class Collection implements Countable {
 	/**
 	 * Checks if the passed array has arrays or objects in them.
 	 *
+	 * @since 0.2.0
 	 * @param array<int|string, mixed> $data
 	 * @return bool
 	 */
