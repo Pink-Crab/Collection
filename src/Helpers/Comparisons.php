@@ -51,10 +51,7 @@ class Comparisons {
 	 * @return int
 	 */
 	public function for_object_values( $a, $b ): int {
-
-		// If a is an object
 		if ( \is_object( $a ) ) {
-			// If B isn't return as a none match.
 			if ( ! \is_object( $b ) ) {
 				return 1;
 			}
@@ -65,7 +62,6 @@ class Comparisons {
 		}
 
 		if ( \is_object( $b ) ) {
-			// If B isn't return as a none match.
 			if ( ! \is_object( $a ) ) {
 				return -1;
 			}
@@ -108,19 +104,15 @@ class Comparisons {
 		if ( $a === $b ) { // phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison
 			return 0;
 		}
-		// If a is an object
+
 		if ( \is_object( $a ) ) {
-			// If B isn't return as a none match.
 			if ( ! \is_object( $b ) ) {
 				return 1;
 			}
-			// Compare the object hashes
 			return \spl_object_hash( $a ) > \spl_object_hash( $b ) ? 1 : -1;
 		}
 
-		// If a is an object
 		if ( \is_object( $b ) ) {
-			// If B isn't return as a none match.
 			if ( ! \is_object( $a ) ) { // @phpstan-ignore-line
 				return -1;
 			}
