@@ -69,10 +69,6 @@ class Comparisons {
 			if ( ! \is_object( $a ) ) {
 				return -1;
 			}
-
-			if ( $a == $b ) { // phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison
-				return 0;
-			}
 		}
 
 		if ( is_bool( $a ) || is_bool( $b ) ) {
@@ -128,9 +124,6 @@ class Comparisons {
 			if ( ! \is_object( $a ) ) { // @phpstan-ignore-line
 				return -1;
 			}
-			// Compare the object hashes
-			// @phpstan-ignore-next-line
-			return \spl_object_hash( $a ) > \spl_object_hash( $b ) ? 1 : -1;
 		}
 
 		return $a > $b ? 1 : -1;
