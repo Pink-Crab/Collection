@@ -362,12 +362,13 @@ var_dump($collection->diff($diff_collection)); // 1,2,3
 
 If either collection/array contains objects, `array_udiff` will be used. By default this will match objects based on the instance (not values), but an optional callback can be used.
 
-There are 2 helper functions that can be used 
+There are 2 helper functions that can be used, these helper functions return the comparison callable, so be called directly.
 * ```Comparisons::by_instances()``` matches by instances
 * ```Comparisons::by_values()``` matches by values
 
 ```php
 $collection->diff($some_array, Comparisons::by_values());
+$collection->diff($some_array, Comparisons::by_instances());
 ```
 
 
@@ -390,10 +391,11 @@ var_dump($collection->intersect($as_collection)); // 6,7,8,9,10
 ```
 If either collection/array contains objects, `array_uintersect` will be used. By default this will match objects based on the instance (not values), but an optional callback can be used.
 
-There are 2 helper functions that can be used 
+There are 2 helper functions that can be used, these helper functions return the comparison callable, so be called directly.
 * ```Comparisons::by_instances()``` matches by instances
 * ```Comparisons::by_values()``` matches by values
 
 ```php
+$collection->intersect($some_array, Comparisons::by_instances());
 $collection->intersect($some_array, Comparisons::by_values());
 ```
