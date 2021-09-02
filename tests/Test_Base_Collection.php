@@ -667,8 +667,8 @@ class Test_Base_Collection extends TestCase {
 			}
 		);
 
-		// Check grouped uses the Indexed trait.
-		$this->assertContains( Indexed::class, \class_uses( $initial ) );
+		// Check grouped uses the Indexed trait (so we can access our group keys by name)
+		$this->assertContains( Indexed::class, \class_uses( $grouped ) );
 
 		// Check all even values are held in Type_Collection.
 		$this->assertInstanceOf( Typed_Collection::class, $grouped->get( 'EVEN' ) );
@@ -679,29 +679,6 @@ class Test_Base_Collection extends TestCase {
 		$this->assertInstanceOf( Typed_Collection::class, $grouped->get( 'ODD' ) );
 		$this->assertContains( $a_1, $grouped->get( 'ODD' )->to_array() );
 		$this->assertContains( $a_3, $grouped->get( 'ODD' )->to_array() );
-	}
-
-	/**
-	 * Test that all sub collections created with GROUP_BY() are the same type as
-	 * the initial collection.
-	 *
-	 * @return void
-	 */
-	public function test_grouped_sub_collections_retain_initial_type(): void
-	{
-		$collection = new Typed_Collection();
-		$a = new Type_A();
-		$a->value = 1;
-		$b = new Type_A();
-		$b->value = 2;
-		$collection->push($a, $b);
-
-		$grouped = $collection->group_by(
-		// Returns 'EVEN' or 'ODD' based on the value property.
-			function( $data ):string {
-				return $data->value === 1 ? 'ONE' : 'TWO';
-			}
-		);
 	}
 
 	/**
