@@ -168,7 +168,10 @@ class Test_Base_Collection extends TestCase {
 		$output = ob_get_contents();
 		ob_end_clean();
 
+		// Check each iteration echos the value.
 		$this->assertEquals( '1234', $output );
+		
+		// Check that the return value is ignored and the initial collection remains unchanged.
 		$this->assertEquals( 1, $collection->to_array()[0] );
 		$this->assertEquals( 2, $collection->to_array()[1] );
 		$this->assertEquals( 3, $collection->to_array()[2] );
