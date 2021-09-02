@@ -613,30 +613,30 @@ class Test_Base_Collection extends TestCase {
 			}
 		);
 
-		// Cast as an array for easier checking.
-		$as_array = $collection->to_array();
+		// Cast as an array (of collections) for easier checking.
+		$grouped = $collection->to_array();
 
 		// Check the array has 2 keys.
-		$this->assertCount( 2, $as_array );
-		$this->assertArrayHasKey( 'NUMERICAL', $as_array );
-		$this->assertArrayHasKey( 'NOT NUMERICAL', $as_array );
+		$this->assertCount( 2, $grouped );
+		$this->assertArrayHasKey( 'NUMERICAL', $grouped );
+		$this->assertArrayHasKey( 'NOT NUMERICAL', $grouped );
 
 		// Check both are collections
-		$this->assertInstanceOf( Collection::class, $as_array['NUMERICAL'] );
-		$this->assertInstanceOf( Collection::class, $as_array['NOT NUMERICAL'] );
+		$this->assertInstanceOf( Collection::class, $grouped['NUMERICAL'] );
+		$this->assertInstanceOf( Collection::class, $grouped['NOT NUMERICAL'] );
 
 		// Check NUMERICAL array contains the 3 values: '1', 2, 3.4
-		$this->assertCount( 3, $as_array['NUMERICAL'] );
-		$this->assertTrue( $as_array['NUMERICAL']->contains( '1' ) );
-		$this->assertTrue( $as_array['NUMERICAL']->contains( 2 ) );
-		$this->assertTrue( $as_array['NUMERICAL']->contains( 3.4 ) );
+		$this->assertCount( 3, $grouped['NUMERICAL'] );
+		$this->assertTrue( $grouped['NUMERICAL']->contains( '1' ) );
+		$this->assertTrue( $grouped['NUMERICAL']->contains( 2 ) );
+		$this->assertTrue( $grouped['NUMERICAL']->contains( 3.4 ) );
 
 		// Check NOT NUMERICAL array contains the 4 values: 'string', array( ), null, true
-		$this->assertCount( 3, $as_array['NOT NUMERICAL'] );
-		$this->assertTrue( $as_array['NOT NUMERICAL']->contains( 'string' ) );
-		$this->assertTrue( $as_array['NOT NUMERICAL']->contains( array() ) );
-		$this->assertTrue( $as_array['NOT NUMERICAL']->contains( null ) );
-		$this->assertTrue( $as_array['NOT NUMERICAL']->contains( true ) );
+		$this->assertCount( 3, $grouped['NOT NUMERICAL'] );
+		$this->assertTrue( $grouped['NOT NUMERICAL']->contains( 'string' ) );
+		$this->assertTrue( $grouped['NOT NUMERICAL']->contains( array() ) );
+		$this->assertTrue( $grouped['NOT NUMERICAL']->contains( null ) );
+		$this->assertTrue( $grouped['NOT NUMERICAL']->contains( true ) );
 	}
 
 	/**
@@ -679,6 +679,29 @@ class Test_Base_Collection extends TestCase {
 		$this->assertInstanceOf( Typed_Collection::class, $grouped->get( 'ODD' ) );
 		$this->assertContains( $a_1, $grouped->get( 'ODD' )->to_array() );
 		$this->assertContains( $a_3, $grouped->get( 'ODD' )->to_array() );
+	}
+
+	/**
+	 * Test that all sub collections created with GROUP_BY() are the same type as
+	 * the initial collection.
+	 *
+	 * @return void
+	 */
+	public function test_grouped_sub_collections_retain_initial_type(): void
+	{
+		$collection = new Typed_Collection();
+		$a = new Type_A();
+		$a->value = 1;
+		$b = new Type_A();
+		$b->value = 2;
+		$collection->push($a, $b);
+
+		$grouped = $collection->group_by(
+		// Returns 'EVEN' or 'ODD' based on the value property.
+			function( $data ):string {
+				return $data->value === 1 ? 'ONE' : 'TWO';
+			}
+		);
 	}
 
 	/**
