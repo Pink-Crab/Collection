@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace PinkCrab\Core\Tests\Collection;
 
-use Collator;
 use stdClass;
 use TypeError;
 use UnderflowException;
 use PHPUnit\Framework\TestCase;
 use PinkCrab\Collection\Collection;
+use PinkCrab\Collection\Helpers\Comparisons;
 use PinkCrab\Collection\Tests\Fixtures\Type_A;
 use PinkCrab\Collection\Tests\Fixtures\Sample_Class;
 use PinkCrab\Collection\Tests\Fixtures\Typed_Collection;
@@ -607,7 +607,7 @@ class Test_Base_Collection extends TestCase {
 		$collection = new Collection( array( '1', 2, 3.4, 'string', array( 'array' ), null, true ) );
 
 		$collection = $collection->group_by(
-			// Returns 'NUMERICAL' or 'NOT NUMERICAL'
+		// Returns 'NUMERICAL' or 'NOT NUMERICAL'
 			function( $data ):string {
 				return \is_numeric( $data ) ? 'NUMERICAL' : 'NOT NUMERICAL';
 			}
@@ -661,7 +661,7 @@ class Test_Base_Collection extends TestCase {
 
 		$inital  = new Typed_Collection( array( $a_1, $a_2, $a_3, $a_4 ) );
 		$grouped = $inital->group_by(
-			// Returns 'EVEN' or 'ODD' based on the value property.
+		// Returns 'EVEN' or 'ODD' based on the value property.
 			function( $data ):string {
 				return $data->value % 2 === 0 ? 'EVEN' : 'ODD';
 			}
@@ -679,5 +679,224 @@ class Test_Base_Collection extends TestCase {
 		$this->assertInstanceOf( Typed_Collection::class, $grouped->get( 'ODD' ) );
 		$this->assertContains( $a_1, $grouped->get( 'ODD' )->to_array() );
 		$this->assertContains( $a_3, $grouped->get( 'ODD' )->to_array() );
+	}
+
+	/**
+	 * Test that by default when trying to get an intersect of 2 collections, objects are matched by instance.
+	 *
+	 * @return void
+	 */
+	public function test_can_use_intersect_with_collection_of_objects_using_instance(): void {
+		$same_object      = new stdClass;
+		$same_object->foo = 'bar';
+
+		$base_collection = Collection::from( array( $same_object, 'Some Other Value of different type' ) );
+		$comparing       = Collection::from( array( new stdClass, array(), $same_object, new stdClass, 'Some Other Value of different type' ) );
+
+		$intersecting = $base_collection->intersect( $comparing );
+
+		$this->assertCount( 2, $intersecting );
+		$this->assertContains( $same_object, $intersecting->to_array() );
+		$this->assertContains( 'Some Other Value of different type', $intersecting->to_array() );
+	}
+
+	/**
+	 * Test that intersect works with MD arrays.
+	 *
+	 * @return void
+	 */
+	public function test_can_user_intersect_with_collection_of_md_arrays(): void {
+		$array_1 = array( 1, 2, 3, 4 );
+		$array_2 = array(
+			array(
+				1,
+				3,
+				5,
+				array( 4, 5, 6 ),
+			),
+			array(
+				'string',
+				array(
+					null,
+					null,
+					array( true, false ),
+				),
+			),
+		);
+		$array_3 = array( 'strings' );
+
+		$base_collection = Collection::from( array( $array_1, $array_2, $array_3 ) );
+		$comparing       = Collection::from( array( $array_2, $array_3 ) );
+
+		$intersecting = $base_collection->intersect( $comparing );
+
+		$this->assertCount( 2, $intersecting );
+		$this->assertContains( $array_2, $intersecting->to_array() );
+		$this->assertContains( $array_3, $intersecting->to_array() );
+	}
+
+	/**
+	 * Test intersect can be carried out comparing objects by instance (STRICT)
+	 *
+	 * @return void
+	 */
+	public function test_can_intersect_with_object_instances(): void {
+		$instance          = new Type_A();
+		$instance_1        = new Type_A();
+		$instance_1->value = 'same';
+		$instance_2        = new Type_A();
+		$instance_2->value = 'same';
+		$instance_3        = new Type_A();
+		$instance_3->value = 'same';
+		$instance_4        = new Type_A();
+		$instance_4->value = 'same';
+		$base_collection   = Collection::from( array( $instance, $instance_1, $instance_2 ) );
+		$comparing         = Collection::from( array( $instance_3, $instance, $instance_4 ) );
+
+		$intersecting = $base_collection->intersect( $comparing, Comparisons::by_instances() );
+		$this->assertCount( 1, $intersecting );
+		$this->assertContains( $instance, $intersecting->to_array() );
+	}
+
+	/**
+	 * Test that doing intersect with collection of mixed types, but matching
+	 * objects based on instance.
+	 *
+	 * @return void
+	 */
+	public function test_intersect_with_instances_mixed_types() {
+		$instance_1 = new Type_A();
+		$instance_2 = new Type_A();
+
+		$base_collection = Collection::from( array( $instance_1, $instance_2, 'string', 1, 2.3, true, null ) );
+		$comparing       = Collection::from( array( $instance_2, 'string', 2.3, true, false ) );
+		$intersecting    = $base_collection->intersect( $comparing, Comparisons::by_instances() );
+
+		$this->assertCount( 4, $intersecting );
+		$this->assertContains( $instance_2, $intersecting->to_array() );
+		$this->assertContains( 'string', $intersecting->to_array() );
+		$this->assertTrue( in_array( 2.3, $intersecting->to_array(), true ) ); // Doesn't like using contains here!
+		$this->assertContains( true, $intersecting->to_array() );
+
+	}
+
+	/**
+	 * Test intersect can be carried out comparing objects by by values (LOOSE)
+	 *
+	 * @return void
+	 */
+	public function test_can_intersect_with_object_values(): void {
+
+		$instance_1        = new Type_A();
+		$instance_1->value = 'same';
+		$instance_2        = new Type_A();
+		$instance_2->value = 'same';
+		$instance_3        = new Type_A();
+		$instance_3->value = 'not same';
+		$instance_4        = new Type_A();
+		$instance_4->value = 'not same';
+
+		$base_collection = Collection::from( array( $instance_1, $instance_3 ) );
+		$comparing       = Collection::from( array( $instance_2 ) );
+
+		$intersecting = $base_collection->intersect( $comparing, Comparisons::by_values() );
+
+		$this->assertCount( 1, $intersecting );
+		$this->assertContains( $instance_1, $intersecting->to_array() );
+	}
+
+	/**
+	 * Test that doing intersect with collection of mixed types, but matching
+	 * objects based on values.
+	 *
+	 * @return void
+	 */
+	public function test_intersect_with_values_mixed_types(): void {
+
+		$instance_1        = new Type_A();
+		$instance_1->value = 'same';
+		$instance_2        = new Type_A();
+		$instance_2->value = 'same';
+		$instance_3        = new Type_A();
+		$instance_3->value = 'not same';
+
+		$base_collection = Collection::from( array( $instance_1, $instance_3, '!string', 1, '2.3', null, true ) );
+		$comparing       = Collection::from( array( $instance_2, 'string', 2.3, null, true ) );
+		$intersecting    = $base_collection->intersect( $comparing, Comparisons::by_instances() );
+
+		$intersecting = $base_collection->intersect( $comparing, Comparisons::by_values() );
+
+		$this->assertCount( 3, $intersecting );
+		$this->assertContains( $instance_1, $intersecting->to_array() );
+	}
+
+	/**
+	 * Test that the difference between 2 arrays/collection can be calculated, treating object instances
+	 * as matches
+	 *
+	 * @return void
+	 */
+	public function test_diff_with_object_instances(): void {
+		$instance_1 = new Type_A();
+		$instance_2 = new Type_A();
+
+		$base_collection = Collection::from( array( $instance_1, $instance_2, 'string', 1, 2.3, true, null ) );
+		$comparing       = Collection::from( array( $instance_2, 'string', 2.3, true, false ) );
+		$diff            = $base_collection->diff( $comparing, Comparisons::by_instances() );
+
+		$this->assertCount( 3, $diff );
+		$this->assertContains( $instance_1, $diff->to_array() );
+		$this->assertContains( null, $diff->to_array() );
+		$this->assertTrue( in_array( 1, $diff->to_array(), true ) ); // Doesn't like using contains here!
+	}
+
+	/**
+	 * Test diff can be carried out comparing objects by by values (LOOSE)
+	 *
+	 * @return void
+	 */
+	public function test_diff_with_object_values():void {
+		$instance_1        = new Type_A();
+		$instance_1->value = 'same';
+		$instance_2        = new Type_A();
+		$instance_2->value = 'same';
+		$instance_3        = new Type_A();
+		$instance_3->value = 'not same';
+		$instance_4        = new Type_A();
+		$instance_4->value = 'not same';
+
+		$base_collection = Collection::from( array( $instance_1, $instance_3 ) );
+		$comparing       = Collection::from( array( $instance_2 ) );
+		$diff            = $base_collection->diff( $comparing, Comparisons::by_values() );
+
+		$this->assertCount( 1, $diff );
+		$this->assertEquals( $diff->pop(), $instance_3 );
+	}
+
+	/**
+	 * Test that doing diff with collection of mixed types, but matching
+	 * objects based on values.
+	 *
+	 * @return void
+	 */
+	public function test_diff_with_values_mixed_types(): void {
+
+		$instance_1        = new Type_A();
+		$instance_1->value = 'same';
+		$instance_2        = new Type_A();
+		$instance_2->value = 'same';
+		$instance_3        = new Type_A();
+		$instance_3->value = 'not same';
+
+		$base_collection = Collection::from( array( $instance_1, $instance_3, '!string', 1, '2.3', null, true ) );
+		$comparing       = Collection::from( array( $instance_2, 'string', 1, 2.3, null, true ) );
+
+		$diff = $base_collection->diff( $comparing, Comparisons::by_values() );
+
+		$this->assertCount( 4, $diff );
+		$this->assertContains( $instance_3, $diff->to_array() );
+		$this->assertContains( '!string', $diff->to_array() );
+		$this->assertContains( '2.3', $diff->to_array() );
+		$this->assertContains( true, $diff->to_array() );
 	}
 }
