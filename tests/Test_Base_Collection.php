@@ -68,6 +68,9 @@ class Test_Base_Collection extends TestCase {
 		$this->assertEquals( 4, $modified_collection->to_array()[2] );
 		$this->assertEquals( 5, $collection->to_array()[3] );
 		$this->assertEquals( 5, $modified_collection->to_array()[3] );
+
+		// Ensure the same instance is returned.
+		$this->assertSame($collection, $modified_collection);
 	}
 
 	/**
