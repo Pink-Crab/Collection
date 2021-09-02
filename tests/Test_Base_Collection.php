@@ -178,6 +178,11 @@ class Test_Base_Collection extends TestCase {
 		$this->assertEquals( 4, $collection->to_array()[3] );
 	}
 
+	/**	
+	 * Test that a function can be passed to be used in the reduce method.
+	 * 
+	 * @return void
+	 */
 	public function test_can_use_reduce(): void {
 		$initial_data = array( 1, 2, 3, 4 );
 		$collection  = Collection::from( $initial_data );
