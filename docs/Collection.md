@@ -347,6 +347,7 @@ var_dump($collection); //  1,2,3,4,5,6,7,8,9,10
 Computes the difference between the existing collection and another \(array or Collection\). As with array\_diff this only compares in 1 direction.
 
 > @param array\|collection $data  
+> @param callable\|null $comparator  
 > @return New Collection  
 > @thorws TypeError if $data is not an array or collection.
 
@@ -359,11 +360,23 @@ var_dump($collection->diff($diff_array)); // 9,10
 var_dump($collection->diff($diff_collection)); // 1,2,3
 ```
 
+If either collection/array contains objects, `array_udiff` will be used. By default this will match objects based on the instance (not values), but an optional callback can be used.
+
+There are 2 helper functions that can be used 
+* ```Comparisons::by_instances()``` matches by instances
+* ```Comparisons::by_values()``` matches by values
+
+```php
+$collection->diff($some_array, Comparisons::by_values());
+```
+
+
 ### Collection::intersect\(\)
 
 Computes the matches between the existing collection and another \(array or Collection\). As with array\_intersect this only compares in 1 direction.
 
 > @param array\|collection $data  
+> @param callable\|null $comparator  
 > @return New Collection  
 > @thorws TypeError if $data is not an array or collection.
 
@@ -372,7 +385,15 @@ $collection = Collection::from( [1,2,3,4,5,6,7,8,9,10] );
 $as_array = [1,2,3,4,5,11,12,13];
 $as_collection = Collection::from( [6,7,8,9,10,20,21,99] );
 
-var_dump($collection->diff($as_array)); // 1,2,3,4,5
-var_dump($collection->diff($as_collection)); // 6,7,8,9,10
+var_dump($collection->intersect($as_array)); // 1,2,3,4,5
+var_dump($collection->intersect($as_collection)); // 6,7,8,9,10
 ```
+If either collection/array contains objects, `array_uintersect` will be used. By default this will match objects based on the instance (not values), but an optional callback can be used.
 
+There are 2 helper functions that can be used 
+* ```Comparisons::by_instances()``` matches by instances
+* ```Comparisons::by_values()``` matches by values
+
+```php
+$collection->intersect($some_array, Comparisons::by_values());
+```

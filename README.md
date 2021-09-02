@@ -88,5 +88,6 @@ $collection->each(function($e){
 #### MIT License http://www.opensource.org/licenses/mit-license.html  
 
 ## Change Log ##
+* 0.2.0 - Added in option callbacks for diff and intersect, complete with helper functions for checking based on object instance or values/type.
 * 0.1.0 - Added Has_ArrayAccess and Is_Iterable traits to allow the implementation of the interfaces. Added docs from existing GitBook repo.
 * 0.0.0 - Extracted from the PinkCrab Plugin Framework as a standalone package.
