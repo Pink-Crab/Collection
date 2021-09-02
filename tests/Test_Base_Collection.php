@@ -32,14 +32,14 @@ class Test_Base_Collection extends TestCase {
 	 */
 	public function test_can_populate_from_array(): void {
 
-		$inital_data = array( 1, 2, 3, 4 );
+		$initial_data = array( 1, 2, 3, 4 );
 
 		// Using constructor.
-		$collection = new Collection( $inital_data );
-		$this->assertSame( $inital_data, $collection->to_array() );
+		$collection = new Collection( $initial_data );
+		$this->assertSame( $initial_data, $collection->to_array() );
 
 		// Using Collection::from()
-		$this->assertSame( $inital_data, Collection::from( $inital_data )->to_array() );
+		$this->assertSame( $initial_data, Collection::from( $initial_data )->to_array() );
 	}
 
 	/**
@@ -49,8 +49,8 @@ class Test_Base_Collection extends TestCase {
 	 */
 	public function test_can_apply_callback_to_collection(): void {
 
-		$inital_data = array( 1, 2, 3, 4 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4 );
+		$collection  = Collection::from( $initial_data );
 
 		$modified_collection = $collection->apply(
 			static function( $e ) {
@@ -77,8 +77,8 @@ class Test_Base_Collection extends TestCase {
 	 */
 	public function test_map_creates_new_collection(): void {
 
-		$inital_data = array( 1, 2, 3, 4 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4 );
+		$collection  = Collection::from( $initial_data );
 
 		$modified_collection = $collection->map(
 			static function( $e ) {
@@ -87,7 +87,7 @@ class Test_Base_Collection extends TestCase {
 		);
 
 		// Ensure the callback is applied to the initial data
-		// And a new collection is issued (inital collection should be unchanged.)
+		// And a new collection is issued (initial collection should be unchanged.)
 		$this->assertEquals( 1, $collection->to_array()[0] );
 		$this->assertEquals( 2, $modified_collection->to_array()[0] );
 
@@ -108,8 +108,8 @@ class Test_Base_Collection extends TestCase {
 	 * @return void
 	 */
 	public function test_can_use_filter(): void {
-		$inital_data = array( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 );
+		$collection  = Collection::from( $initial_data );
 
 		$modified_collection = $collection->filter(
 			static function( $e ) {
@@ -117,7 +117,7 @@ class Test_Base_Collection extends TestCase {
 			}
 		);
 
-		// Ensure the inital collection remains in tact
+		// Ensure the initial collection remains in tact
 		$this->assertCount( 10, $collection->to_array() );
 		// Check the filtered array contains 5 (even).
 		$this->assertCount( 5, $modified_collection->to_array() );
@@ -130,8 +130,8 @@ class Test_Base_Collection extends TestCase {
 	 * @return void
 	 */
 	public function test_can_use_apply(): void {
-		$inital_data = array( 1, 2, 3, 4 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4 );
+		$collection  = Collection::from( $initial_data );
 
 		$collection->apply(
 			static function( $e ) {
@@ -152,8 +152,8 @@ class Test_Base_Collection extends TestCase {
 	 * @return voic
 	 */
 	public function test_can_use_each(): void {
-		$inital_data = array( 1, 2, 3, 4 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4 );
+		$collection  = Collection::from( $initial_data );
 
 		ob_start();
 		$collection->each(
@@ -173,8 +173,8 @@ class Test_Base_Collection extends TestCase {
 	}
 
 	public function test_can_use_reduce(): void {
-		$inital_data = array( 1, 2, 3, 4 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4 );
+		$collection  = Collection::from( $initial_data );
 
 		$result = $collection->reduce(
 			static function( $carry, $value ) {
@@ -194,8 +194,8 @@ class Test_Base_Collection extends TestCase {
 	 * @return void
 	 */
 	public function test_can_merge_with_array(): void {
-		$inital_data = array( 1, 2, 3, 4 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4 );
+		$collection  = Collection::from( $initial_data );
 
 		$new_collection = $collection->merge( array( 5, 6, 7, 8, 9, 10 ) );
 		$this->assertEquals( 1, $new_collection->to_array()[0] );
@@ -209,7 +209,7 @@ class Test_Base_Collection extends TestCase {
 		$this->assertEquals( 9, $new_collection->to_array()[8] );
 		$this->assertEquals( 10, $new_collection->to_array()[9] );
 
-		// Check inital collection as is.
+		// Check initial collection as is.
 		$this->assertArrayNotHasKey( 5, $collection->to_array() );
 	}
 
@@ -220,8 +220,8 @@ class Test_Base_Collection extends TestCase {
 	 * @return void
 	 */
 	public function test_can_merge_with_collection(): void {
-		$inital_data      = array( 1, 2, 3, 4 );
-		$collection       = Collection::from( $inital_data );
+		$initial_data      = array( 1, 2, 3, 4 );
+		$collection       = Collection::from( $initial_data );
 		$merge_collection = Collection::from( array( 5, 6, 7, 8, 9, 10 ) );
 
 		$new_collection = $collection->merge( $merge_collection );
@@ -236,7 +236,7 @@ class Test_Base_Collection extends TestCase {
 		$this->assertEquals( 9, $new_collection->to_array()[8] );
 		$this->assertEquals( 10, $new_collection->to_array()[9] );
 
-		// Check inital collection as is.
+		// Check initial collection as is.
 		$this->assertArrayNotHasKey( 5, $collection->to_array() );
 	}
 
@@ -247,8 +247,8 @@ class Test_Base_Collection extends TestCase {
 	 */
 	public function test_throws_exception_if_merged_with_incompatible_type(): void {
 		$this->expectException( TypeError::class );
-		$inital_data = array( 1, 2, 3, 4 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4 );
+		$collection  = Collection::from( $initial_data );
 		$collection->merge( (object) array( 'A1' => 2 ) );
 	}
 
@@ -258,8 +258,8 @@ class Test_Base_Collection extends TestCase {
 	 * @return void
 	 */
 	public function test_can_push_to_collection(): void {
-		$inital_data = array( 1, 2, 3, 4 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4 );
+		$collection  = Collection::from( $initial_data );
 
 		$collection->push( 5 );
 		$this->assertEquals( 5, $collection->to_array()[4] );
@@ -281,8 +281,8 @@ class Test_Base_Collection extends TestCase {
 	 * @return void
 	 */
 	public function test_can_pop_from_tail(): void {
-		$inital_data = array( 1, 2, 3, 4 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4 );
+		$collection  = Collection::from( $initial_data );
 
 		// Test we can pop and its removed.
 		$this->assertEquals( 4, $collection->pop() );
@@ -309,8 +309,8 @@ class Test_Base_Collection extends TestCase {
 	 * @return void
 	 */
 	public function test_can_add_to_head(): void {
-		$inital_data = array( 1, 2, 3, 4 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4 );
+		$collection  = Collection::from( $initial_data );
 
 		$collection->unshift( 0 );
 		$this->assertEquals( 0, $collection->to_array()[0] );
@@ -331,8 +331,8 @@ class Test_Base_Collection extends TestCase {
 	 * @return void
 	 */
 	public function test_can_shift_from_tail(): void {
-		$inital_data = array( 1, 2, 3, 4 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4 );
+		$collection  = Collection::from( $initial_data );
 
 		// Test we can pop and its removed.
 		$this->assertEquals( 1, $collection->shift() );
@@ -372,8 +372,8 @@ class Test_Base_Collection extends TestCase {
 	 * @return void
 	 */
 	public function test_contains(): void {
-		$inital_data = array( 1, 2, 3, 4 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4 );
+		$collection  = Collection::from( $initial_data );
 
 		$this->assertTrue( $collection->contains( 1, 3, 2 ) );
 		$this->assertFalse( $collection->contains( 1, 3, 5 ) );
@@ -410,8 +410,8 @@ class Test_Base_Collection extends TestCase {
 	 * @return void
 	 */
 	public function test_can_count_contents() {
-		$inital_data = array( 1, 2, 3, 4 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4 );
+		$collection  = Collection::from( $initial_data );
 		$this->assertEquals( 4, $collection->count() );
 		// Ensure implements countable.
 		$this->assertCount( 4, $collection );
@@ -423,8 +423,8 @@ class Test_Base_Collection extends TestCase {
 	 * @return void
 	 */
 	public function test_can_clear_collection(): void {
-		$inital_data = array( 1, 2, 3, 4 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4 );
+		$collection  = Collection::from( $initial_data );
 		$this->assertEquals( 4, $collection->count() );
 		$collection->clear();
 		$this->assertEmpty( $collection );
@@ -436,15 +436,15 @@ class Test_Base_Collection extends TestCase {
 	 * @return void
 	 */
 	public function test_can_copy_collection(): void {
-		$inital_collection = Collection::from( array( 1, 2, 3 ) );
-		$copy_collection   = $inital_collection->copy();
+		$initial_collection = Collection::from( array( 1, 2, 3 ) );
+		$copy_collection   = $initial_collection->copy();
 
 		$this->assertNotSame(
-			$inital_collection,
+			$initial_collection,
 			$copy_collection
 		);
 		$this->assertSame(
-			$inital_collection->to_array(),
+			$initial_collection->to_array(),
 			$copy_collection->to_array()
 		);
 	}
@@ -522,7 +522,7 @@ class Test_Base_Collection extends TestCase {
 		$this->assertEquals( 3, $third_4th->to_array()[0] );
 		$this->assertEquals( 4, $third_4th->to_array()[1] );
 
-		// Check inital array has not been changed.
+		// Check initial array has not been changed.
 		$this->assertEquals( 2, $collection->to_array()[1] );
 		$this->assertEquals( 4, $collection->to_array()[3] );
 		$this->assertEquals( 10, $collection->to_array()[9] );
@@ -659,8 +659,8 @@ class Test_Base_Collection extends TestCase {
 		$a_4        = new Type_A();
 		$a_4->value = 4;
 
-		$inital  = new Typed_Collection( array( $a_1, $a_2, $a_3, $a_4 ) );
-		$grouped = $inital->group_by(
+		$initial  = new Typed_Collection( array( $a_1, $a_2, $a_3, $a_4 ) );
+		$grouped = $initial->group_by(
 		// Returns 'EVEN' or 'ODD' based on the value property.
 			function( $data ):string {
 				return $data->value % 2 === 0 ? 'EVEN' : 'ODD';
@@ -668,7 +668,7 @@ class Test_Base_Collection extends TestCase {
 		);
 
 		// Check grouped uses the Indexed trait.
-		$this->assertContains( Indexed::class, \class_uses( $inital ) );
+		$this->assertContains( Indexed::class, \class_uses( $initial ) );
 
 		// Check all even values are held in Type_Collection.
 		$this->assertInstanceOf( Typed_Collection::class, $grouped->get( 'EVEN' ) );
