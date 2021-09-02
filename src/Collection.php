@@ -319,22 +319,22 @@ class Collection implements Countable {
 	 * Optional comparison function can be passed to use array_udiff over array_diff if either data contains
 	 * objects. If no $comparator function passed, will match objects by instance (not values.)
 	 *
-	 * @param array<int|string, mixed>|Collection $data
+	 * @param array<int|string, mixed>|Collection $comparison_data
 	 * @param callable|null $comparator The Comparison function to use.
 	 * @return self
 	 * @throws TypeError
 	 */
-	public function diff( $data, ?callable $comparator = null ):self {
+	public function diff( $comparison_data, ?callable $comparator = null ):self {
 
-		if ( ! is_array( $data ) && ! is_a( $data, static::class ) ) {
+		if ( ! is_array( $comparison_data ) && ! is_a( $comparison_data, static::class ) ) {
 			throw new \TypeError( 'Can only find the diff with other Collections or Arrays.' );
 		}
 
-		$data = is_object( $data ) && is_a( $data, static::class ) ? $data->to_array() : $data;
+		$comparison_data = is_object( $comparison_data ) && is_a( $comparison_data, static::class ) ? $comparison_data->to_array() : $comparison_data;
 
-		$new_data = $this->contains_array_or_object( (array) $this->data ) || $this->contains_array_or_object( (array) $data )
-			? \array_udiff( $this->data, $data, $comparator ?? Comparisons::by_instances() )
-			: array_diff( $this->data, $data );
+		$new_data = Comparisons::contains_object( $this->data ) || Comparisons::contains_object( $comparison_data )
+			? \array_udiff( $this->data, $comparison_data, $comparator ?? Comparisons::by_instances() )
+			: array_diff( $this->data, $comparison_data );
 
 		return new static( $new_data );
 	}
@@ -345,40 +345,24 @@ class Collection implements Countable {
 	 * Optional comparison function can be passed to use array_uintersect over array_intersect if either data contains
 	 * objects. If no $comparator function passed, will match objects by instance (not values.)
 	 *
-	 * @param array<int|string, mixed>|Collection $data
+	 * @param array<int|string, mixed>|Collection $comparison_data
 	 * @param callable|null $comparator The Comparison function to use.
 	 * @return self
 	 * @throws TypeError
 	 */
-	public function intersect( $data, ?callable $comparator = null ):self {
+	public function intersect( $comparison_data, ?callable $comparator = null ):self {
 
-		if ( ! is_array( $data ) && ! is_a( $data, static::class ) ) {
+		if ( ! is_array( $comparison_data ) && ! is_a( $comparison_data, static::class ) ) {
 			throw new \TypeError( 'Can only intersection with other Collections or Arrays.' );
 		}
 
-		$data = is_object( $data ) && is_a( $data, static::class ) ? $data->to_array() : $data;
+		$comparison_data = is_object( $comparison_data ) && is_a( $comparison_data, static::class ) ? $comparison_data->to_array() : $comparison_data;
 
-		$new_data = $this->contains_array_or_object( (array) $this->data ) || $this->contains_array_or_object( (array) $data )
-			? \array_uintersect( $this->data, $data, $comparator ?? Comparisons::by_instances() )
-			: \array_intersect( $this->data, $data );
+		$new_data = Comparisons::contains_object( $this->data ) || Comparisons::contains_object( $comparison_data )
+			? \array_uintersect( $this->data, $comparison_data, $comparator ?? Comparisons::by_instances() )
+			: \array_intersect( $this->data, $comparison_data );
 
 		return new static( $new_data );
-	}
-
-	/**
-	 * Checks if the passed array has arrays or objects in them.
-	 *
-	 * @since 0.2.0
-	 * @param array<int|string, mixed> $data
-	 * @return bool
-	 */
-	protected function contains_array_or_object( array $data ): bool {
-		foreach ( $data as $datum ) {
-			if ( \is_array( $datum ) || \is_object( $datum ) ) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 }

@@ -46,6 +46,38 @@ class Comparisons {
 	}
 
 	/**
+	 * Returns the for_object_instances as lambda.
+	 *
+	 * @since 0.2.0
+	 * @return callable(mixed:$a,mixed:$b): int
+	 */
+	public static function by_instances(): callable {
+		/**
+		 * @param mixed $a
+		 * @param mixed $b
+		 * @return int
+		 */
+		return function( $a, $b ): int {
+			return ( new self() )->for_object_instances( $a, $b );
+		};
+	}
+
+	/**
+	 * Checks if the array contains objects.
+	 *
+	 * @param array<int|string, mixed> $data
+	 * @return bool
+	 */
+	public static function contains_object( array $data ): bool {
+		foreach ( $data as $datum ) {
+			if ( \is_array( $datum ) || \is_object( $datum ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Compares two values, if encounters an object will match on instance.
 	 *
 	 * @since 0.2.0
@@ -75,23 +107,6 @@ class Comparisons {
 			return 0;
 		}
 		return $a > $b ? 1 : -1;
-	}
-
-	/**
-	 * Returns the for_object_instances as lambda.
-	 *
-	 * @since 0.2.0
-	 * @return callable(mixed:$a,mixed:$b): int
-	 */
-	public static function by_instances(): callable {
-		/**
-		 * @param mixed $a
-		 * @param mixed $b
-		 * @return int
-		 */
-		return function( $a, $b ): int {
-			return ( new self() )->for_object_instances( $a, $b );
-		};
 	}
 
 	/**
