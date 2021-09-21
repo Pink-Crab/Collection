@@ -615,6 +615,8 @@ class Test_Base_Collection extends TestCase {
 	 */
 	public function test_group_by_into_sub_collections(): void {
 
+		print( \PHP_EOL. \PHP_EOL. \PHP_EOL. \PHP_EOL. \PHP_EOL.'YO STU WHATS UP' . \PHP_EOL. \PHP_EOL. \PHP_EOL. \PHP_EOL. \PHP_EOL);
+
 		$collection = new Collection( array( '1', 2, 3.4, 'string', array( 'array' ), null, true ) );
 
 		$collection = $collection->group_by(
