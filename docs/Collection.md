@@ -399,3 +399,25 @@ There are 2 helper functions that can be used, these helper functions return the
 $collection->intersect($some_array, Comparisons::by_instances());
 $collection->intersect($some_array, Comparisons::by_values());
 ```
+
+### Collection::group_by\(\)
+
+Groups an existing collection into sub collections (of the same type), which itself in held in a `Collection` that uses the `Indexed` trait.
+
+> @param callable $callable  
+> @return New Indexed Collection  
+
+```php
+$collection = Collection<T>::from( [1,2,3,4,5,6,7,8,9,10] );
+$grouped = $collection->group_by(fn($e) => $e % 2 === 0 ? 'EVEN' : 'ODD');
+
+var_dump($grouped->as_array()); //['EVEN' => Collection<T>[2,4,6,8,10], 'ODD' => Collection<T>[1,3,5,7,9]]
+
+// All Indexed functionlity is applied.
+var_dump($grouped->has('EVEN')); //true
+var_dump($grouped->has('ODD')); //true
+
+var_dump($grouped->get('EVEN')->to_array()); // [2,4,6,8,10]
+var_dump($grouped->has('ODD')); //Collection<T>[1,3,5,7,9]
+```
+
