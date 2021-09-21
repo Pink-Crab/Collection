@@ -645,7 +645,7 @@ class Test_Base_Collection extends TestCase {
 		$this->assertTrue( $grouped['NUMERICAL']->contains( 3.4 ) );
 
 		// Check NOT NUMERICAL array contains the 4 values: 'string', array( ), null, true
-		$this->assertCount( 3, $grouped['NOT NUMERICAL'] );
+		$this->assertCount( 4, $grouped['NOT NUMERICAL'] );
 		$this->assertTrue( $grouped['NOT NUMERICAL']->contains( 'string' ) );
 		$this->assertTrue( $grouped['NOT NUMERICAL']->contains( array() ) );
 		$this->assertTrue( $grouped['NOT NUMERICAL']->contains( null ) );
