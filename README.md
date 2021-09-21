@@ -1,11 +1,11 @@
 # PinkCrab Collection #
 
-![alt text](https://img.shields.io/badge/Current_Version-0.1.0-yellow.svg?style=flat " ") 
+![alt text](https://img.shields.io/badge/Current_Version-0.2.0-yellow.svg?style=flat " ") 
 [![Open Source Love](https://badges.frapsoft.com/os/mit/mit.svg?v=102)]()
 ![](https://github.com/Pink-Crab/Collection/workflows/GitHub_CI/badge.svg " ")
 [![codecov](https://codecov.io/gh/Pink-Crab/collection/branch/master/graph/badge.svg?token=6tUeia2v2S)](https://codecov.io/gh/Pink-Crab/collection)
 
-## Version 0.1.0 ##
+## Version 0.2.0 ##
 
 > This library was extracted from the PinkCrab Plugin Framework (Perique)
 
@@ -88,5 +88,6 @@ $collection->each(function($e){
 #### MIT License http://www.opensource.org/licenses/mit-license.html  
 
 ## Change Log ##
+* 0.2.0 - Added in option callbacks for diff and intersect, complete with helper functions for checking based on object instance or values/type. Also includes the group_by() method.
 * 0.1.0 - Added Has_ArrayAccess and Is_Iterable traits to allow the implementation of the interfaces. Added docs from existing GitBook repo.
 * 0.0.0 - Extracted from the PinkCrab Plugin Framework as a standalone package.

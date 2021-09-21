@@ -24,7 +24,6 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^7.0",
-
         "symfony/var-dumper": "4.*",
         "phpstan/phpstan": "^0.12.6",
         "dealerdirect/phpcodesniffer-composer-installer": "*",
@@ -33,10 +32,7 @@
         "gin0115/wpunit-helpers": "^1.0"
     },
     "require": {
-        "php": ">=7.1.0",
-        "level-2/dice": "4.0.*",
-        "psr/container": "^1.0",
-        "pinkcrab/hook-loader": "1.*"
+        "php": ">=7.1.0"
     },
     "scripts": {
         "test": "phpunit --coverage-clover coverage.xml --testdox",

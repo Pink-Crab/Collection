@@ -28,6 +28,8 @@ namespace PinkCrab\Collection;
 use Countable;
 use TypeError;
 use UnderflowException;
+use PinkCrab\Collection\Traits\Indexed;
+use PinkCrab\Collection\Helpers\Comparisons;
 
 class Collection implements Countable {
 
@@ -315,44 +317,81 @@ class Collection implements Countable {
 	/**
 	 * Returns a new collection of differences between another collection or array.
 	 *
-	 * @param array<int|string, mixed>|Collection $data
+	 * Optional comparison function can be passed to use array_udiff over array_diff if either data contains
+	 * objects. If no $comparator function passed, will match objects by instance (not values.)
+	 *
+	 * @param array<int|string, mixed>|Collection $comparison_data
+	 * @param callable|null $comparator The Comparison function to use.
 	 * @return self
 	 * @throws TypeError
 	 */
-	public function diff( $data ):self {
+	public function diff( $comparison_data, ?callable $comparator = null ):self {
 
-		if ( ! is_array( $data ) && ! is_a( $data, static::class ) ) {
-			throw new \TypeError( 'Can only merge with other Collections or Arrays.' );
+		if ( ! is_array( $comparison_data ) && ! is_a( $comparison_data, static::class ) ) {
+			throw new \TypeError( 'Can only find the diff with other Collections or Arrays.' );
 		}
 
-		return new static(
-			array_diff(
-				$this->data,
-				is_object( $data ) && is_a( $data, static::class ) ? $data->to_array() : $data
-			)
-		);
+		$comparison_data = is_object( $comparison_data ) && is_a( $comparison_data, static::class ) ? $comparison_data->to_array() : $comparison_data;
+
+		$new_data = Comparisons::contains_object( $this->data ) || Comparisons::contains_object( $comparison_data )
+			? \array_udiff( $this->data, $comparison_data, $comparator ?? Comparisons::by_instances() )
+			: array_diff( $this->data, $comparison_data );
+
+		return new static( $new_data );
 	}
 
 	/**
 	 * Returns a collection of same values from another array or collection.
 	 *
-	 * @param array<int|string, mixed>|Collection $data
+	 * Optional comparison function can be passed to use array_uintersect over array_intersect if either data contains
+	 * objects. If no $comparator function passed, will match objects by instance (not values.)
+	 *
+	 * @param array<int|string, mixed>|Collection $comparison_data
+	 * @param callable|null $comparator The Comparison function to use.
 	 * @return self
+	 * @throws TypeError
 	 */
-	public function intersect( $data ):self {
+	public function intersect( $comparison_data, ?callable $comparator = null ):self {
 
-		if ( ! is_array( $data ) && ! is_a( $data, static::class ) ) {
-			throw new \TypeError( 'Can only merge with other Collections or Arrays.' );
+		if ( ! is_array( $comparison_data ) && ! is_a( $comparison_data, static::class ) ) {
+			throw new \TypeError( 'Can only intersection with other Collections or Arrays.' );
 		}
 
-		return new static(
-			array_intersect(
-				$this->data,
-				is_object( $data ) && is_a( $data, static::class ) ? $data->to_array() : $data
-			)
-		);
+		$comparison_data = is_object( $comparison_data ) && is_a( $comparison_data, static::class ) ? $comparison_data->to_array() : $comparison_data;
+
+		$new_data = Comparisons::contains_object( $this->data ) || Comparisons::contains_object( $comparison_data )
+			? \array_uintersect( $this->data, $comparison_data, $comparator ?? Comparisons::by_instances() )
+			: \array_intersect( $this->data, $comparison_data );
+
+		return new static( $new_data );
 	}
 
+	/**
+	 * Creates an indexed collection of all values using the callable passed
+	 *
+	 * @param callable $callable
+	 * @return self
+	 * @since 0.2.0
+	 */
+	public function group_by( callable $callable ):self {
+		$group = array();
 
+		$new_collection = new class() extends Collection{
+			use Indexed;
+		};
+
+		// Group the data using callable
+		foreach ( $this->data as $value ) {
+			$result             = $callable( $value );
+			$group[ $result ][] = $value;
+		}
+
+		// Add to Collection
+		foreach ( $group as $group_index => $group_value ) {
+			$new_collection->set( $group_index, new static( $group_value ) );
+		}
+
+		return $new_collection;
+	}
 
 }

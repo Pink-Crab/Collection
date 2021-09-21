@@ -12,11 +12,16 @@ declare(strict_types=1);
 
 namespace PinkCrab\Core\Tests\Collection;
 
+use PinkCrab\Collection\Traits\Indexed;
+use stdClass;
 use TypeError;
 use UnderflowException;
 use PHPUnit\Framework\TestCase;
 use PinkCrab\Collection\Collection;
+use PinkCrab\Collection\Helpers\Comparisons;
+use PinkCrab\Collection\Tests\Fixtures\Type_A;
 use PinkCrab\Collection\Tests\Fixtures\Sample_Class;
+use PinkCrab\Collection\Tests\Fixtures\Typed_Collection;
 
 class Test_Base_Collection extends TestCase {
 
@@ -28,14 +33,14 @@ class Test_Base_Collection extends TestCase {
 	 */
 	public function test_can_populate_from_array(): void {
 
-		$inital_data = array( 1, 2, 3, 4 );
+		$initial_data = array( 1, 2, 3, 4 );
 
 		// Using constructor.
-		$collection = new Collection( $inital_data );
-		$this->assertSame( $inital_data, $collection->to_array() );
+		$collection = new Collection( $initial_data );
+		$this->assertSame( $initial_data, $collection->to_array() );
 
 		// Using Collection::from()
-		$this->assertSame( $inital_data, Collection::from( $inital_data )->to_array() );
+		$this->assertSame( $initial_data, Collection::from( $initial_data )->to_array() );
 	}
 
 	/**
@@ -45,8 +50,8 @@ class Test_Base_Collection extends TestCase {
 	 */
 	public function test_can_apply_callback_to_collection(): void {
 
-		$inital_data = array( 1, 2, 3, 4 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4 );
+		$collection  = Collection::from( $initial_data );
 
 		$modified_collection = $collection->apply(
 			static function( $e ) {
@@ -64,6 +69,9 @@ class Test_Base_Collection extends TestCase {
 		$this->assertEquals( 4, $modified_collection->to_array()[2] );
 		$this->assertEquals( 5, $collection->to_array()[3] );
 		$this->assertEquals( 5, $modified_collection->to_array()[3] );
+
+		// Ensure the same instance is returned.
+		$this->assertSame($collection, $modified_collection);
 	}
 
 	/**
@@ -73,8 +81,8 @@ class Test_Base_Collection extends TestCase {
 	 */
 	public function test_map_creates_new_collection(): void {
 
-		$inital_data = array( 1, 2, 3, 4 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4 );
+		$collection  = Collection::from( $initial_data );
 
 		$modified_collection = $collection->map(
 			static function( $e ) {
@@ -83,7 +91,7 @@ class Test_Base_Collection extends TestCase {
 		);
 
 		// Ensure the callback is applied to the initial data
-		// And a new collection is issued (inital collection should be unchanged.)
+		// And a new collection is issued (initial collection should be unchanged.)
 		$this->assertEquals( 1, $collection->to_array()[0] );
 		$this->assertEquals( 2, $modified_collection->to_array()[0] );
 
@@ -104,8 +112,8 @@ class Test_Base_Collection extends TestCase {
 	 * @return void
 	 */
 	public function test_can_use_filter(): void {
-		$inital_data = array( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 );
+		$collection  = Collection::from( $initial_data );
 
 		$modified_collection = $collection->filter(
 			static function( $e ) {
@@ -113,7 +121,7 @@ class Test_Base_Collection extends TestCase {
 			}
 		);
 
-		// Ensure the inital collection remains in tact
+		// Ensure the initial collection remains in tact
 		$this->assertCount( 10, $collection->to_array() );
 		// Check the filtered array contains 5 (even).
 		$this->assertCount( 5, $modified_collection->to_array() );
@@ -126,8 +134,8 @@ class Test_Base_Collection extends TestCase {
 	 * @return void
 	 */
 	public function test_can_use_apply(): void {
-		$inital_data = array( 1, 2, 3, 4 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4 );
+		$collection  = Collection::from( $initial_data );
 
 		$collection->apply(
 			static function( $e ) {
@@ -148,8 +156,8 @@ class Test_Base_Collection extends TestCase {
 	 * @return voic
 	 */
 	public function test_can_use_each(): void {
-		$inital_data = array( 1, 2, 3, 4 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4 );
+		$collection  = Collection::from( $initial_data );
 
 		ob_start();
 		$collection->each(
@@ -161,16 +169,24 @@ class Test_Base_Collection extends TestCase {
 		$output = ob_get_contents();
 		ob_end_clean();
 
+		// Check each iteration echos the value.
 		$this->assertEquals( '1234', $output );
+		
+		// Check that the return value is ignored and the initial collection remains unchanged.
 		$this->assertEquals( 1, $collection->to_array()[0] );
 		$this->assertEquals( 2, $collection->to_array()[1] );
 		$this->assertEquals( 3, $collection->to_array()[2] );
 		$this->assertEquals( 4, $collection->to_array()[3] );
 	}
 
+	/**	
+	 * Test that a function can be passed to be used in the reduce method.
+	 * 
+	 * @return void
+	 */
 	public function test_can_use_reduce(): void {
-		$inital_data = array( 1, 2, 3, 4 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4 );
+		$collection  = Collection::from( $initial_data );
 
 		$result = $collection->reduce(
 			static function( $carry, $value ) {
@@ -190,8 +206,8 @@ class Test_Base_Collection extends TestCase {
 	 * @return void
 	 */
 	public function test_can_merge_with_array(): void {
-		$inital_data = array( 1, 2, 3, 4 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4 );
+		$collection  = Collection::from( $initial_data );
 
 		$new_collection = $collection->merge( array( 5, 6, 7, 8, 9, 10 ) );
 		$this->assertEquals( 1, $new_collection->to_array()[0] );
@@ -205,7 +221,7 @@ class Test_Base_Collection extends TestCase {
 		$this->assertEquals( 9, $new_collection->to_array()[8] );
 		$this->assertEquals( 10, $new_collection->to_array()[9] );
 
-		// Check inital collection as is.
+		// Check initial collection as is.
 		$this->assertArrayNotHasKey( 5, $collection->to_array() );
 	}
 
@@ -216,8 +232,8 @@ class Test_Base_Collection extends TestCase {
 	 * @return void
 	 */
 	public function test_can_merge_with_collection(): void {
-		$inital_data      = array( 1, 2, 3, 4 );
-		$collection       = Collection::from( $inital_data );
+		$initial_data      = array( 1, 2, 3, 4 );
+		$collection       = Collection::from( $initial_data );
 		$merge_collection = Collection::from( array( 5, 6, 7, 8, 9, 10 ) );
 
 		$new_collection = $collection->merge( $merge_collection );
@@ -232,7 +248,7 @@ class Test_Base_Collection extends TestCase {
 		$this->assertEquals( 9, $new_collection->to_array()[8] );
 		$this->assertEquals( 10, $new_collection->to_array()[9] );
 
-		// Check inital collection as is.
+		// Check initial collection as is.
 		$this->assertArrayNotHasKey( 5, $collection->to_array() );
 	}
 
@@ -243,8 +259,8 @@ class Test_Base_Collection extends TestCase {
 	 */
 	public function test_throws_exception_if_merged_with_incompatible_type(): void {
 		$this->expectException( TypeError::class );
-		$inital_data = array( 1, 2, 3, 4 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4 );
+		$collection  = Collection::from( $initial_data );
 		$collection->merge( (object) array( 'A1' => 2 ) );
 	}
 
@@ -254,8 +270,8 @@ class Test_Base_Collection extends TestCase {
 	 * @return void
 	 */
 	public function test_can_push_to_collection(): void {
-		$inital_data = array( 1, 2, 3, 4 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4 );
+		$collection  = Collection::from( $initial_data );
 
 		$collection->push( 5 );
 		$this->assertEquals( 5, $collection->to_array()[4] );
@@ -277,8 +293,8 @@ class Test_Base_Collection extends TestCase {
 	 * @return void
 	 */
 	public function test_can_pop_from_tail(): void {
-		$inital_data = array( 1, 2, 3, 4 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4 );
+		$collection  = Collection::from( $initial_data );
 
 		// Test we can pop and its removed.
 		$this->assertEquals( 4, $collection->pop() );
@@ -305,8 +321,8 @@ class Test_Base_Collection extends TestCase {
 	 * @return void
 	 */
 	public function test_can_add_to_head(): void {
-		$inital_data = array( 1, 2, 3, 4 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4 );
+		$collection  = Collection::from( $initial_data );
 
 		$collection->unshift( 0 );
 		$this->assertEquals( 0, $collection->to_array()[0] );
@@ -327,8 +343,8 @@ class Test_Base_Collection extends TestCase {
 	 * @return void
 	 */
 	public function test_can_shift_from_tail(): void {
-		$inital_data = array( 1, 2, 3, 4 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4 );
+		$collection  = Collection::from( $initial_data );
 
 		// Test we can pop and its removed.
 		$this->assertEquals( 1, $collection->shift() );
@@ -368,8 +384,8 @@ class Test_Base_Collection extends TestCase {
 	 * @return void
 	 */
 	public function test_contains(): void {
-		$inital_data = array( 1, 2, 3, 4 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4 );
+		$collection  = Collection::from( $initial_data );
 
 		$this->assertTrue( $collection->contains( 1, 3, 2 ) );
 		$this->assertFalse( $collection->contains( 1, 3, 5 ) );
@@ -406,8 +422,8 @@ class Test_Base_Collection extends TestCase {
 	 * @return void
 	 */
 	public function test_can_count_contents() {
-		$inital_data = array( 1, 2, 3, 4 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4 );
+		$collection  = Collection::from( $initial_data );
 		$this->assertEquals( 4, $collection->count() );
 		// Ensure implements countable.
 		$this->assertCount( 4, $collection );
@@ -419,8 +435,8 @@ class Test_Base_Collection extends TestCase {
 	 * @return void
 	 */
 	public function test_can_clear_collection(): void {
-		$inital_data = array( 1, 2, 3, 4 );
-		$collection  = Collection::from( $inital_data );
+		$initial_data = array( 1, 2, 3, 4 );
+		$collection  = Collection::from( $initial_data );
 		$this->assertEquals( 4, $collection->count() );
 		$collection->clear();
 		$this->assertEmpty( $collection );
@@ -432,15 +448,15 @@ class Test_Base_Collection extends TestCase {
 	 * @return void
 	 */
 	public function test_can_copy_collection(): void {
-		$inital_collection = Collection::from( array( 1, 2, 3 ) );
-		$copy_collection   = $inital_collection->copy();
+		$initial_collection = Collection::from( array( 1, 2, 3 ) );
+		$copy_collection   = $initial_collection->copy();
 
 		$this->assertNotSame(
-			$inital_collection,
+			$initial_collection,
 			$copy_collection
 		);
 		$this->assertSame(
-			$inital_collection->to_array(),
+			$initial_collection->to_array(),
 			$copy_collection->to_array()
 		);
 	}
@@ -518,7 +534,7 @@ class Test_Base_Collection extends TestCase {
 		$this->assertEquals( 3, $third_4th->to_array()[0] );
 		$this->assertEquals( 4, $third_4th->to_array()[1] );
 
-		// Check inital array has not been changed.
+		// Check initial array has not been changed.
 		$this->assertEquals( 2, $collection->to_array()[1] );
 		$this->assertEquals( 4, $collection->to_array()[3] );
 		$this->assertEquals( 10, $collection->to_array()[9] );
@@ -591,5 +607,308 @@ class Test_Base_Collection extends TestCase {
 		$this->expectException( TypeError::class );
 		$collection = Collection::from( array( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ) );
 		$collection->intersect( 'IM NOT AN ARRAY OR COLLECTION' );
+	}
+
+	/**
+	 * Test that collection can be grouped into sub collections
+	 *
+	 * @return void
+	 */
+	public function test_group_by_into_sub_collections(): void {
+
+		$collection = new Collection( array( '1', 2, 3.4, 'string', array( 'array' ), null, true ) );
+
+		$collection = $collection->group_by(
+		// Returns 'NUMERICAL' or 'NOT NUMERICAL'
+			function( $data ):string {
+				return \is_numeric( $data ) ? 'NUMERICAL' : 'NOT NUMERICAL';
+			}
+		);
+
+		// Cast as an array (of collections) for easier checking.
+		$grouped = $collection->to_array();
+
+		// Check the array has 2 keys.
+		$this->assertCount( 2, $grouped );
+		$this->assertArrayHasKey( 'NUMERICAL', $grouped );
+		$this->assertArrayHasKey( 'NOT NUMERICAL', $grouped );
+
+		// Check both are collections
+		$this->assertInstanceOf( Collection::class, $grouped['NUMERICAL'] );
+		$this->assertInstanceOf( Collection::class, $grouped['NOT NUMERICAL'] );
+
+		// Check NUMERICAL array contains the 3 values: '1', 2, 3.4
+		$this->assertCount( 3, $grouped['NUMERICAL'] );
+		$this->assertTrue( $grouped['NUMERICAL']->contains( '1' ) );
+		$this->assertTrue( $grouped['NUMERICAL']->contains( 2 ) );
+		$this->assertTrue( $grouped['NUMERICAL']->contains( 3.4 ) );
+
+		// Check NOT NUMERICAL array contains the 4 values: 'string', array( ), null, true
+		$this->assertCount( 4, $grouped['NOT NUMERICAL'] );
+		$this->assertTrue( $grouped['NOT NUMERICAL']->contains( 'string' ) );
+		$this->assertTrue( $grouped['NOT NUMERICAL']->contains( array( 'array' ) ) );
+		$this->assertTrue( $grouped['NOT NUMERICAL']->contains( null ) );
+		$this->assertTrue( $grouped['NOT NUMERICAL']->contains( true ) );
+	}
+
+	/**
+	 * When grouping a collection, the parent collection should implement Indexed, while the
+	 * group nodes should be clones of the original.
+	 *
+	 * @return void
+	 */
+	public function test_group_by_uses_same_collection_type_for_groups() {
+		// Mock data.
+		$a_1        = new Type_A();
+		$a_1->value = 1;
+
+		$a_2        = new Type_A();
+		$a_2->value = 2;
+
+		$a_3        = new Type_A();
+		$a_3->value = 3;
+
+		$a_4        = new Type_A();
+		$a_4->value = 4;
+
+		$initial  = new Typed_Collection( array( $a_1, $a_2, $a_3, $a_4 ) );
+		$grouped = $initial->group_by(
+		// Returns 'EVEN' or 'ODD' based on the value property.
+			function( $data ):string {
+				return $data->value % 2 === 0 ? 'EVEN' : 'ODD';
+			}
+		);
+
+		// Check grouped uses the Indexed trait (so we can access our group keys by name)
+		$this->assertContains( Indexed::class, \class_uses( $grouped ) );
+
+		// Check all even values are held in Type_Collection.
+		$this->assertInstanceOf( Typed_Collection::class, $grouped->get( 'EVEN' ) );
+		$this->assertContains( $a_2, $grouped->get( 'EVEN' )->to_array() );
+		$this->assertContains( $a_4, $grouped->get( 'EVEN' )->to_array() );
+
+		// Check all odd values are held in Type_Collection.
+		$this->assertInstanceOf( Typed_Collection::class, $grouped->get( 'ODD' ) );
+		$this->assertContains( $a_1, $grouped->get( 'ODD' )->to_array() );
+		$this->assertContains( $a_3, $grouped->get( 'ODD' )->to_array() );
+	}
+
+	/**
+	 * Test that by default when trying to get an intersect of 2 collections, objects are matched by instance.
+	 *
+	 * @return void
+	 */
+	public function test_can_use_intersect_with_collection_of_objects_using_instance(): void {
+		$same_object      = new stdClass;
+		$same_object->foo = 'bar';
+
+		$base_collection = Collection::from( array( $same_object, 'Some Other Value of different type' ) );
+		$comparing       = Collection::from( array( new stdClass, array(), $same_object, new stdClass, 'Some Other Value of different type' ) );
+
+		$intersecting = $base_collection->intersect( $comparing );
+
+		$this->assertCount( 2, $intersecting );
+		$this->assertContains( $same_object, $intersecting->to_array() );
+		$this->assertContains( 'Some Other Value of different type', $intersecting->to_array() );
+	}
+
+	/**
+	 * Test that intersect works with MD arrays.
+	 *
+	 * @return void
+	 */
+	public function test_can_user_intersect_with_collection_of_md_arrays(): void {
+		$array_1 = array( 1, 2, 3, 4 );
+		$array_2 = array(
+			array(
+				1,
+				3,
+				5,
+				array( 4, 5, 6 ),
+			),
+			array(
+				'string',
+				array(
+					null,
+					null,
+					array( true, false ),
+				),
+			),
+		);
+		$array_3 = array( 'strings' );
+
+		$base_collection = Collection::from( array( $array_1, $array_2, $array_3 ) );
+		$comparing       = Collection::from( array( $array_2, $array_3 ) );
+
+		$intersecting = $base_collection->intersect( $comparing );
+
+		$this->assertCount( 2, $intersecting );
+		$this->assertContains( $array_2, $intersecting->to_array() );
+		$this->assertContains( $array_3, $intersecting->to_array() );
+	}
+
+	/**
+	 * Test intersect can be carried out comparing objects by instance (STRICT)
+	 *
+	 * @return void
+	 */
+	public function test_can_intersect_with_object_instances(): void {
+		$instance          = new Type_A();
+		$instance_1        = new Type_A();
+		$instance_1->value = 'same';
+		$instance_2        = new Type_A();
+		$instance_2->value = 'same';
+		$instance_3        = new Type_A();
+		$instance_3->value = 'same';
+		$instance_4        = new Type_A();
+		$instance_4->value = 'same';
+		$base_collection   = Collection::from( array( $instance, $instance_1, $instance_2 ) );
+		$comparing         = Collection::from( array( $instance_3, $instance, $instance_4 ) );
+
+		$intersecting = $base_collection->intersect( $comparing, Comparisons::by_instances() );
+		$this->assertCount( 1, $intersecting );
+		$this->assertContains( $instance, $intersecting->to_array() );
+	}
+
+	/**
+	 * Test that doing intersect with collection of mixed types, but matching
+	 * objects based on instance.
+	 *
+	 * @return void
+	 */
+	public function test_intersect_with_instances_mixed_types() {
+		$instance_1 = new Type_A();
+		$instance_2 = new Type_A();
+
+		$base_collection = Collection::from( array( $instance_1, $instance_2, 'string', 1, 2.3, true, null ) );
+		$comparing       = Collection::from( array( $instance_2, 'string', 2.3, true, false ) );
+		$intersecting    = $base_collection->intersect( $comparing, Comparisons::by_instances() );
+
+		$this->assertCount( 4, $intersecting );
+		$this->assertContains( $instance_2, $intersecting->to_array() );
+		$this->assertContains( 'string', $intersecting->to_array() );
+		$this->assertTrue( in_array( 2.3, $intersecting->to_array(), true ) ); // Doesn't like using contains here!
+		$this->assertContains( true, $intersecting->to_array() );
+
+	}
+
+	/**
+	 * Test intersect can be carried out comparing objects by by values (LOOSE)
+	 *
+	 * @return void
+	 */
+	public function test_can_intersect_with_object_values(): void {
+
+		$instance_1        = new Type_A();
+		$instance_1->value = 'same';
+		$instance_2        = new Type_A();
+		$instance_2->value = 'same';
+		$instance_3        = new Type_A();
+		$instance_3->value = 'not same';
+		$instance_4        = new Type_A();
+		$instance_4->value = 'not same';
+
+		$base_collection = Collection::from( array( $instance_1, $instance_3 ) );
+		$comparing       = Collection::from( array( $instance_2 ) );
+
+		$intersecting = $base_collection->intersect( $comparing, Comparisons::by_values() );
+
+		$this->assertCount( 1, $intersecting );
+		$this->assertContains( $instance_1, $intersecting->to_array() );
+	}
+
+	/**
+	 * Test that doing intersect with collection of mixed types, but matching
+	 * objects based on values.
+	 *
+	 * @return void
+	 */
+	public function test_intersect_with_values_mixed_types(): void {
+
+		$instance_1        = new Type_A();
+		$instance_1->value = 'same';
+		$instance_2        = new Type_A();
+		$instance_2->value = 'same';
+		$instance_3        = new Type_A();
+		$instance_3->value = 'not same';
+
+		$base_collection = Collection::from( array( $instance_1, $instance_3, '!string', 1, '2.3', null, true ) );
+		$comparing       = Collection::from( array( $instance_2, 'string', 2.3, null, true ) );
+		$intersecting    = $base_collection->intersect( $comparing, Comparisons::by_instances() );
+
+		$intersecting = $base_collection->intersect( $comparing, Comparisons::by_values() );
+
+		$this->assertCount( 3, $intersecting );
+		$this->assertContains( $instance_1, $intersecting->to_array() );
+	}
+
+	/**
+	 * Test that the difference between 2 arrays/collection can be calculated, treating object instances
+	 * as matches
+	 *
+	 * @return void
+	 */
+	public function test_diff_with_object_instances(): void {
+		$instance_1 = new Type_A();
+		$instance_2 = new Type_A();
+
+		$base_collection = Collection::from( array( $instance_1, $instance_2, 'string', 1, 2.3, true, null ) );
+		$comparing       = Collection::from( array( $instance_2, 'string', 2.3, true, false ) );
+		$diff            = $base_collection->diff( $comparing, Comparisons::by_instances() );
+
+		$this->assertCount( 3, $diff );
+		$this->assertContains( $instance_1, $diff->to_array() );
+		$this->assertContains( null, $diff->to_array() );
+		$this->assertTrue( in_array( 1, $diff->to_array(), true ) ); // Doesn't like using contains here!
+	}
+
+	/**
+	 * Test diff can be carried out comparing objects by by values (LOOSE)
+	 *
+	 * @return void
+	 */
+	public function test_diff_with_object_values():void {
+		$instance_1        = new Type_A();
+		$instance_1->value = 'same';
+		$instance_2        = new Type_A();
+		$instance_2->value = 'same';
+		$instance_3        = new Type_A();
+		$instance_3->value = 'not same';
+		$instance_4        = new Type_A();
+		$instance_4->value = 'not same';
+
+		$base_collection = Collection::from( array( $instance_1, $instance_3 ) );
+		$comparing       = Collection::from( array( $instance_2 ) );
+		$diff            = $base_collection->diff( $comparing, Comparisons::by_values() );
+
+		$this->assertCount( 1, $diff );
+		$this->assertEquals( $diff->pop(), $instance_3 );
+	}
+
+	/**
+	 * Test that doing diff with collection of mixed types, but matching
+	 * objects based on values.
+	 *
+	 * @return void
+	 */
+	public function test_diff_with_values_mixed_types(): void {
+
+		$instance_1        = new Type_A();
+		$instance_1->value = 'same';
+		$instance_2        = new Type_A();
+		$instance_2->value = 'same';
+		$instance_3        = new Type_A();
+		$instance_3->value = 'not same';
+
+		$base_collection = Collection::from( array( $instance_1, $instance_3, '!string', 1, '2.3', null, true ) );
+		$comparing       = Collection::from( array( $instance_2, 'string', 1, 2.3, null, true ) );
+
+		$diff = $base_collection->diff( $comparing, Comparisons::by_values() );
+
+		$this->assertCount( 4, $diff );
+		$this->assertContains( $instance_3, $diff->to_array() );
+		$this->assertContains( '!string', $diff->to_array() );
+		$this->assertContains( '2.3', $diff->to_array() );
+		$this->assertContains( true, $diff->to_array() );
 	}
 }
