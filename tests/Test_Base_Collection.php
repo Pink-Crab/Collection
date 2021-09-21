@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace PinkCrab\Core\Tests\Collection;
 
+use PinkCrab\Collection\Traits\Indexed;
 use stdClass;
 use TypeError;
 use UnderflowException;
@@ -615,8 +616,6 @@ class Test_Base_Collection extends TestCase {
 	 */
 	public function test_group_by_into_sub_collections(): void {
 
-		print( \PHP_EOL. \PHP_EOL. \PHP_EOL. \PHP_EOL. \PHP_EOL.'YO STU WHATS UP' . \PHP_EOL. \PHP_EOL. \PHP_EOL. \PHP_EOL. \PHP_EOL);
-
 		$collection = new Collection( array( '1', 2, 3.4, 'string', array( 'array' ), null, true ) );
 
 		$collection = $collection->group_by(
@@ -647,7 +646,7 @@ class Test_Base_Collection extends TestCase {
 		// Check NOT NUMERICAL array contains the 4 values: 'string', array( ), null, true
 		$this->assertCount( 4, $grouped['NOT NUMERICAL'] );
 		$this->assertTrue( $grouped['NOT NUMERICAL']->contains( 'string' ) );
-		$this->assertTrue( $grouped['NOT NUMERICAL']->contains( array() ) );
+		$this->assertTrue( $grouped['NOT NUMERICAL']->contains( array( 'array' ) ) );
 		$this->assertTrue( $grouped['NOT NUMERICAL']->contains( null ) );
 		$this->assertTrue( $grouped['NOT NUMERICAL']->contains( true ) );
 	}

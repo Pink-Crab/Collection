@@ -54,7 +54,7 @@ trait Indexed {
 	}
 
 	/**
-	 * Sets a value at a defined inded
+	 * Sets a value at a defined index
 	 *
 	 * @param int|string $index
 	 * @param mixed $value

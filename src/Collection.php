@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace PinkCrab\Collection;
 
 use Countable;
+use PinkCrab\Collection\Traits\Indexed;
 use TypeError;
 use UnderflowException;
 use PinkCrab\Collection\Helpers\Comparisons;
@@ -364,5 +365,25 @@ class Collection implements Countable {
 
 		return new static( $new_data );
 	}
+
+	public function group_by( callable $callable ):self {
+		$group = array();
+
+		$new_collection = new class() extends Collection{
+			use Indexed;
+		};
+
+        foreach( $this->data as $key => $value ){
+            $result = $callable( $value );
+            $group[$result][]=$value;
+        }
+
+        foreach( $group as $group_index => $group_value ){
+            $poopdeck = new static($group_value);
+            $new_collection->set($group_index, $poopdeck);
+        }
+
+	    return $new_collection;
+    }
 
 }
