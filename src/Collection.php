@@ -28,6 +28,7 @@ namespace PinkCrab\Collection;
 use Countable;
 use TypeError;
 use UnderflowException;
+use PinkCrab\Collection\Traits\Indexed;
 use PinkCrab\Collection\Helpers\Comparisons;
 
 class Collection implements Countable {
@@ -363,6 +364,34 @@ class Collection implements Countable {
 			: \array_intersect( $this->data, $comparison_data );
 
 		return new static( $new_data );
+	}
+
+	/**
+	 * Creates an indexed collection of all values using the callable passed
+	 *
+	 * @param callable $callable
+	 * @return self
+	 * @since 0.2.0
+	 */
+	public function group_by( callable $callable ):self {
+		$group = array();
+
+		$new_collection = new class() extends Collection{
+			use Indexed;
+		};
+
+		// Group the data using callable
+		foreach ( $this->data as $value ) {
+			$result             = $callable( $value );
+			$group[ $result ][] = $value;
+		}
+
+		// Add to Collection
+		foreach ( $group as $group_index => $group_value ) {
+			$new_collection->set( $group_index, new static( $group_value ) );
+		}
+
+		return $new_collection;
 	}
 
 }
