@@ -418,6 +418,6 @@ var_dump($grouped->has('EVEN')); //true
 var_dump($grouped->has('ODD')); //true
 
 var_dump($grouped->get('EVEN')->to_array()); // [2,4,6,8,10]
-var_dump($grouped->has('ODD')); //Collection<T>[1,3,5,7,9]
+var_dump($grouped->get('ODD')); //Collection<T>[1,3,5,7,9]
 ```
 
