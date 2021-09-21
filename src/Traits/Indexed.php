@@ -70,7 +70,7 @@ trait Indexed {
 	 * Uses array_search()
 	 *
 	 * @param mixed $value
-	 * @return int|false
+	 * @return int|false|string
 	 */
 	public function find( $value ) {
 		return array_search( $value, $this->data, true );
@@ -80,7 +80,7 @@ trait Indexed {
 	 * Removes an item based on its index.
 	 *
 	 * @param int|string $index
-	 * @return void
+	 * @return mixed
 	 * @throws OutOfRangeException if index doesnt exist.
 	 */
 	public function remove( $index ) {
