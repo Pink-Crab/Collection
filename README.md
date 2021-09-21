@@ -68,7 +68,7 @@ var_dump( $indexed_collection );
 class Post_Collection extends Collection {
 	// Filter out anything not matching.
 	protected function map_construct( array $data ): array {
-		return array_filter(fn($e): bool => is_a($data, \WP_Post::class));
+		return array_filter($data, fn($e): bool => is_a($e, \WP_Post::class));
 	}
 }
 
