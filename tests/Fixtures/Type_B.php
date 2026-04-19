@@ -13,4 +13,7 @@ declare(strict_types=1);
 
 namespace PinkCrab\Collection\Tests\Fixtures;
 
-class Type_B {}
+class Type_B {
+	/** @var mixed */
+	public $value;
+}

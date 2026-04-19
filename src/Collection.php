@@ -74,12 +74,12 @@ class Collection implements Countable {
 	/**
 	 * Apply a function to the collection of items.
 	 *
-	 * @param callable $function
+	 * @param callable $callback
 	 * @return self
 	 */
-	public function apply( callable $function ): self {
+	public function apply( callable $callback ): self {
 		foreach ( $this->data as &$element ) {
-			$element = $function( $element );
+			$element = $callback( $element );
 		}
 		return $this;
 	}
@@ -87,12 +87,12 @@ class Collection implements Countable {
 	/**
 	 * Apply a function to the collection of items.
 	 *
-	 * @param callable $function
+	 * @param callable $callback
 	 * @return self
 	 */
-	public function each( callable $function ): self {
+	public function each( callable $callback ): self {
 		foreach ( $this->data as $key => $value ) {
-			$function( $value, $key );
+			$callback( $value, $key );
 		}
 		return $this;
 	}
@@ -100,35 +100,35 @@ class Collection implements Countable {
 	/**
 	 * Apply a filter function to the contents.
 	 *
-	 * @param callable $function
+	 * @param callable $callback
 	 * @return self
 	 */
-	public function filter( callable $function, int $mode = 0 ): self {
-		return new static( array_filter( $this->data, $function, $mode ) );
+	public function filter( callable $callback, int $mode = 0 ): self {
+		return new static( array_filter( $this->data, $callback, $mode ) );
 	}
 
 	/**
 	 * Apply a map function to the contents.
 	 *
-	 * @param callable $function
+	 * @param callable $callback
 	 * @return self
 	 */
-	public function map( callable $function ): self {
-		return new static( array_map( $function, $this->data ) );
+	public function map( callable $callback ): self {
+		return new static( array_map( $callback, $this->data ) );
 	}
 
 	/**
 	 * Apply a function to reduce the contents of the internal array.
 	 *
-	 * @param callable $function
+	 * @param callable $callback
 	 * @param string $inital
 	 * @return mixed
 	 */
-	public function reduce( callable $function, $inital = '' ) {
+	public function reduce( callable $callback, $inital = '' ) {
 		return array_reduce(
 			$this->data,
-			function( $carry, $value ) use ( $function ) {
-				return $function( $carry, $value );
+			function ( $carry, $value ) use ( $callback ) {
+				return $callback( $carry, $value );
 			},
 			$inital
 		);
@@ -138,19 +138,17 @@ class Collection implements Countable {
 	 * Merges with another array or collection
 	 *
 	 * @param Collection|array<int|string, mixed> $data
+	 * @phpstan-param mixed $data
 	 * @return self
 	 * @throws TypeError If not an arrya or Collection.
 	 */
 	public function merge( $data ): self {
-		if ( ! is_array( $data ) && ! is_a( $data, static::class ) ) {
+		if ( $data instanceof self ) {
+			$data = $data->to_array();
+		} elseif ( ! is_array( $data ) ) {
 			throw new TypeError( 'Can only merge with other Collections or Arrays.' );
 		}
-		return new static(
-			array_merge(
-				$this->data,
-				is_object( $data ) && is_a( $data, static::class ) ? $data->to_array() : $data
-			)
-		);
+		return new static( array_merge( $this->data, $data ) );
 	}
 
 	/**
@@ -280,12 +278,12 @@ class Collection implements Countable {
 	/**
 	 * Sorts the existing collection and returns the current instance.
 	 *
-	 * @param callable|null $function
+	 * @param callable|null $callback
 	 * @return self
 	 */
-	public function sort( ?callable $function = null ): self {
-		if ( $function ) {
-			usort( $this->data, $function );
+	public function sort( ?callable $callback = null ): self {
+		if ( $callback ) {
+			usort( $this->data, $callback );
 		} else {
 			natsort( $this->data );
 		}
@@ -296,11 +294,11 @@ class Collection implements Countable {
 	/**
 	 * Sorts a new instance of the collection.
 	 *
-	 * @param callable|null $function
+	 * @param callable|null $callback
 	 * @return self
 	 */
-	public function sorted( ?callable $function = null ): self {
-		return ( new static( $this->data ) )->sort( $function );
+	public function sorted( ?callable $callback = null ): self {
+		return ( new static( $this->data ) )->sort( $callback );
 	}
 
 	/**
@@ -321,17 +319,18 @@ class Collection implements Countable {
 	 * objects. If no $comparator function passed, will match objects by instance (not values.)
 	 *
 	 * @param array<int|string, mixed>|Collection $comparison_data
+	 * @phpstan-param mixed $comparison_data
 	 * @param callable|null $comparator The Comparison function to use.
 	 * @return self
 	 * @throws TypeError
 	 */
-	public function diff( $comparison_data, ?callable $comparator = null ):self {
+	public function diff( $comparison_data, ?callable $comparator = null ): self {
 
-		if ( ! is_array( $comparison_data ) && ! is_a( $comparison_data, static::class ) ) {
+		if ( $comparison_data instanceof self ) {
+			$comparison_data = $comparison_data->to_array();
+		} elseif ( ! is_array( $comparison_data ) ) {
 			throw new \TypeError( 'Can only find the diff with other Collections or Arrays.' );
 		}
-
-		$comparison_data = is_object( $comparison_data ) && is_a( $comparison_data, static::class ) ? $comparison_data->to_array() : $comparison_data;
 
 		$new_data = Comparisons::contains_object( $this->data ) || Comparisons::contains_object( $comparison_data )
 			? \array_udiff( $this->data, $comparison_data, $comparator ?? Comparisons::by_instances() )
@@ -347,17 +346,18 @@ class Collection implements Countable {
 	 * objects. If no $comparator function passed, will match objects by instance (not values.)
 	 *
 	 * @param array<int|string, mixed>|Collection $comparison_data
+	 * @phpstan-param mixed $comparison_data
 	 * @param callable|null $comparator The Comparison function to use.
 	 * @return self
 	 * @throws TypeError
 	 */
-	public function intersect( $comparison_data, ?callable $comparator = null ):self {
+	public function intersect( $comparison_data, ?callable $comparator = null ): self {
 
-		if ( ! is_array( $comparison_data ) && ! is_a( $comparison_data, static::class ) ) {
+		if ( $comparison_data instanceof self ) {
+			$comparison_data = $comparison_data->to_array();
+		} elseif ( ! is_array( $comparison_data ) ) {
 			throw new \TypeError( 'Can only intersection with other Collections or Arrays.' );
 		}
-
-		$comparison_data = is_object( $comparison_data ) && is_a( $comparison_data, static::class ) ? $comparison_data->to_array() : $comparison_data;
 
 		$new_data = Comparisons::contains_object( $this->data ) || Comparisons::contains_object( $comparison_data )
 			? \array_uintersect( $this->data, $comparison_data, $comparator ?? Comparisons::by_instances() )
@@ -369,11 +369,11 @@ class Collection implements Countable {
 	/**
 	 * Creates an indexed collection of all values using the callable passed
 	 *
-	 * @param callable $callable
+	 * @param callable $callback
 	 * @return self
 	 * @since 0.2.0
 	 */
-	public function group_by( callable $callable ):self {
+	public function group_by( callable $callback ): self {
 		$group = array();
 
 		$new_collection = new class() extends Collection{
@@ -382,7 +382,7 @@ class Collection implements Countable {
 
 		// Group the data using callable
 		foreach ( $this->data as $value ) {
-			$result             = $callable( $value );
+			$result             = $callback( $value );
 			$group[ $result ][] = $value;
 		}
 
@@ -393,5 +393,4 @@ class Collection implements Countable {
 
 		return $new_collection;
 	}
-
 }

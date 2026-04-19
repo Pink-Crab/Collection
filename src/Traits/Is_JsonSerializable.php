@@ -33,10 +33,17 @@ trait Is_JsonSerializable {
 	 * Returns a representation that can be natively converted to JSON, which is
 	 * called when invoking json_encode.
 	 *
+	 * JsonSerializable::jsonSerialize() was declared `: mixed` in PHP 8.1.
+	 * Since this library still supports PHP 7.1 we can't add the return type
+	 * directly, so the ReturnTypeWillChange attribute silences the deprecation
+	 * on PHP 8.1+. On PHP 7.x the attribute syntax is parsed as a comment and
+	 * has no effect.
+	 *
 	 * @return mixed
 	 *
 	 * @see \JsonSerializable
 	 */
+	#[\ReturnTypeWillChange]
 	public function jsonSerialize() {
 		return $this->data;
 	}

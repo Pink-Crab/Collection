@@ -31,6 +31,7 @@ trait Is_Iterable {
 	 *
 	 * @return mixed|null
 	 */
+	#[\ReturnTypeWillChange]
 	public function rewind() {
 		return reset( $this->data );
 	}
@@ -40,6 +41,7 @@ trait Is_Iterable {
 	 *
 	 * @return mixed
 	 */
+	#[\ReturnTypeWillChange]
 	public function current() {
 		return current( $this->data );
 	}
@@ -47,8 +49,11 @@ trait Is_Iterable {
 	/**
 	 * Returns the current element key
 	 *
-	 * @return string|int
+	 * Returns null when the internal pointer is past the end of the array.
+	 *
+	 * @return string|int|null
 	 */
+	#[\ReturnTypeWillChange]
 	public function key() {
 		return key( $this->data );
 	}
@@ -58,6 +63,7 @@ trait Is_Iterable {
 	 *
 	 * @return mixed|false
 	 */
+	#[\ReturnTypeWillChange]
 	public function next() {
 		return next( $this->data );
 	}
@@ -67,6 +73,7 @@ trait Is_Iterable {
 	 *
 	 * @return bool
 	 */
+	#[\ReturnTypeWillChange]
 	public function valid() {
 		return key( $this->data ) !== null;
 	}

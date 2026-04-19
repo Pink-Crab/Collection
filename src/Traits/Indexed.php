@@ -85,7 +85,8 @@ trait Indexed {
 	 */
 	public function remove( $index ) {
 		if ( ! array_key_exists( $index, $this->data ) ) {
-			throw new OutOfRangeException( sprintf( '%d index doesnt exist in %s', $index, get_class() ) );
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- exception message, not echoed.
+			throw new OutOfRangeException( sprintf( '%d index doesnt exist in %s', $index, static::class ) );
 		}
 
 		// Get the value, unset and return the value.

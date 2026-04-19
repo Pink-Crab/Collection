@@ -1,32 +1,20 @@
-name: GitHub_CI
+name: Tests [PHP7.1-8.5]
 
 on:
   push:
-    branches: [ master, develop ]
+    branches: [ master ]
   pull_request:
     branches: [ master, develop ]
 
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         operating-system: [ubuntu-latest]
-        php-versions: ['7.1', '7.2', '7.3', '7.4']
+        php-versions: ['7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5']
     runs-on: ${{ matrix.operating-system }}
-    services:
-      # Setup MYSQL
-      mysql-service:
-        image: mysql:5.7
-        env:
-          MYSQL_ROOT_PASSWORD: 'crab'
-          MYSQL_DATABASE: pc_core_tests
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -34,7 +22,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
-          extensions: mbstring, intl
+          extensions: mbstring, intl, pcov
           ini-values: post_max_size=256M, log_errors=1
           tools: pecl
 
@@ -42,20 +30,23 @@ jobs:
         run: php -v
 
       - name: Clear existing composer
-        run: rm -rf wordpress && rm -rf vendor && rm -rf composer.lock 
+        run: rm -rf vendor composer.lock
 
-      - name: Validate composer.json and composer.lock
-        run: composer validate
+      - name: Validate composer.json
+        run: composer validate --no-check-lock
 
       - name: Install dependencies
-        run: composer clearcache && rm -rf composer.lock && composer install --prefer-dist --no-suggest
+        run: composer clearcache && composer update --no-cache --prefer-dist
 
       - name: Run Tests
         env:
           environment_github: true
         run: composer all
 
-      - name: Codecov
-        run: bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_COLLECTION }}
-
-      
+      - name: Upload coverage to Codecov
+        if: ${{ matrix.php-versions == '8.4' }}
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_COLLECTION }}
+          files: ./clover.xml
+          fail_ci_if_error: false

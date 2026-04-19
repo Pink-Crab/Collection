@@ -98,9 +98,14 @@ trait Sequence {
 	/**
 	 * Returns a sum of all the elements.
 	 *
+	 * Non-numeric entries are filtered out before summing. PHP 8.3 changed
+	 * array_sum() to throw a TypeError on non-numeric strings instead of
+	 * silently skipping them; filtering up front keeps the same "ignore
+	 * non-numeric values" semantics across every supported PHP version.
+	 *
 	 * @return int|float
 	 */
 	public function sum() {
-		return array_sum( $this->data );
+		return array_sum( array_filter( $this->data, 'is_numeric' ) );
 	}
 }
