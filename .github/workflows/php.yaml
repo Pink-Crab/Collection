@@ -43,25 +43,6 @@ jobs:
           environment_github: true
         run: composer all
 
-      - name: Debug workspace + coverage (8.4 only)
-        if: ${{ matrix.php-versions == '8.4' }}
-        run: |
-          echo "=== pwd ==="
-          pwd
-          echo "=== workspace root ls ==="
-          ls -la
-          echo "=== clover.xml at root? ==="
-          [ -f clover.xml ] && echo "yes, $(wc -c < clover.xml) bytes" || echo "NO"
-          echo "=== coverage-report tree (if present) ==="
-          [ -d coverage-report ] && find coverage-report -maxdepth 4 -type f | head -20 || echo "no coverage-report dir"
-          echo "=== PHP coverage drivers ==="
-          php -m | grep -iE 'pcov|xdebug' || echo "no pcov or xdebug loaded"
-          echo "=== phpunit version ==="
-          vendor/bin/phpunit --version
-          echo "=== direct phpunit clover check ==="
-          vendor/bin/phpunit --colors=never --coverage-clover debug-clover.xml 2>&1 | tail -20
-          [ -f debug-clover.xml ] && echo "debug-clover.xml created, $(wc -c < debug-clover.xml) bytes" || echo "debug-clover.xml NOT created"
-
       - name: Upload coverage to Codecov
         if: ${{ matrix.php-versions == '8.4' }}
         uses: codecov/codecov-action@v4
