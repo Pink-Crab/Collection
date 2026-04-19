@@ -31,7 +31,7 @@ $collection = Collection::from(['your','data']);
 
 A callback can be applied to every element in the collection. This works like map\(\), but rather than returning a new Collection, apply is just applied to the current data.
 
-> @param callable $function  
+> @param callable $callback  
 >       function\(mixed $value\): mixed {...}  
 > @return Existing Collection
 
@@ -47,7 +47,7 @@ var_dump($collection); // 2,4,6,8
 
 A callback can be applied to all items in a collection, then a new collection is returned with the new values. If the Collection is extended, it will return a new instance of the extended class. 
 
-> @param callable $function  
+> @param callable $callback  
 >       function\(mixed $value\): mixed {...}  
 > @return New Collection
 
@@ -63,7 +63,7 @@ var_dump($new_collection); // 2,4,6,8
 
 A callback can be used to perform a foreach loop of the data. The callback takes both $value and $key and a return value is not required/ignored.
 
-> @param callable $function  
+> @param callable $callback  
 >       function\(mixed $value, int\|string $key\): void {...}  
 > @return Existing Collection
 
@@ -83,7 +83,7 @@ C is for Cat
 
 The collection can be filtered into a new collection. It uses the regular array\_filter under the hood and allows the use of its additional flags.
 
-> @param callable $function  
+> @param callable $callback  
 >       function\(mixed $value\|value \[, int\|string $key\], int $mode = 0\): bool {...}  
 > @return New Collection
 
@@ -127,7 +127,7 @@ Applies a filter to reduce the contents of the collection to a single value. Use
 
 By default, the initial value is an empty string, but this can be set as the send parameter.
 
-> @param callable $function  
+> @param callable $callback  
 >       function\(mixed $carry, mixed $value\): mixed {...}  
 > @param mixed $inital  
 > @return Existing Collection
@@ -291,7 +291,7 @@ var_dump($collection === $copy_collection); //false
 
 Sorts the internal array using either natsort\(\) or usort\(\). The same instance is returned after sorting, if you wish to create a new instance, see sorted\(\)
 
-@param callable\|null $function   
+@param callable\|null $callback   
 @return Existing Collection
 
 ```php
@@ -314,7 +314,7 @@ var_dump($collection); // z,y,o,f,a
 
 Sorts the contents of the collection using sort\(\) above, but returns a new collection instance.
 
-@param callable\|null $function   
+@param callable\|null $callback   
 @return New Collection
 
 ```php
@@ -404,7 +404,7 @@ $collection->intersect($some_array, Comparisons::by_values());
 
 Groups an existing collection into sub collections (of the same type), which itself in held in a `Collection` that uses the `Indexed` trait.
 
-> @param callable $callable  
+> @param callable $callback  
 > @return New Indexed Collection  
 
 ```php

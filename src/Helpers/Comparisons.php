@@ -32,7 +32,7 @@ class Comparisons {
 	 * Returns the for_object_values as lambda.
 	 *
 	 * @since 0.2.0
-	 * @return callable(mixed:$a,mixed:$b): int
+	 * @return callable(mixed, mixed): int
 	 */
 	public static function by_values(): callable {
 		/**
@@ -40,7 +40,7 @@ class Comparisons {
 		 * @param mixed $b
 		 * @return int
 		 */
-		return function( $a, $b ): int {
+		return function ( $a, $b ): int {
 			return ( new self() )->for_object_values( $a, $b );
 		};
 	}
@@ -49,7 +49,7 @@ class Comparisons {
 	 * Returns the for_object_instances as lambda.
 	 *
 	 * @since 0.2.0
-	 * @return callable(mixed:$a,mixed:$b): int
+	 * @return callable(mixed, mixed): int
 	 */
 	public static function by_instances(): callable {
 		/**
@@ -57,7 +57,7 @@ class Comparisons {
 		 * @param mixed $b
 		 * @return int
 		 */
-		return function( $a, $b ): int {
+		return function ( $a, $b ): int {
 			return ( new self() )->for_object_instances( $a, $b );
 		};
 	}
@@ -96,7 +96,7 @@ class Comparisons {
 		}
 
 		if ( \is_object( $a ) && \is_object( $b ) ) {
-			return $a == $b ? 0 : -1; // phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison
+			return $a == $b ? 0 : -1; // phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison,Universal.Operators.StrictComparisons.LooseEqual
 		}
 
 		if ( is_bool( $a ) || is_bool( $b ) ) {
@@ -126,11 +126,11 @@ class Comparisons {
 			return \spl_object_hash( $a ) > \spl_object_hash( $b ) ? 1 : -1;
 		}
 
-		if ( \is_object( $a ) && ! \is_object( $b ) ) { // @phpstan-ignore-line
+		if ( \is_object( $a ) ) {
 			return 1;
 		}
 
-		if ( \is_object( $b ) && ! \is_object( $a ) ) {
+		if ( \is_object( $b ) ) {
 			return -1;
 		}
 

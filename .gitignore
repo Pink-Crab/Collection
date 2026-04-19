@@ -3,4 +3,6 @@ wordpress
 coverage-report
 composer.lock
 coverage.xml
+clover.xml
+.phpunit.result.cache
 .vscode

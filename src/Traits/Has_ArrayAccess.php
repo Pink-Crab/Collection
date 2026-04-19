@@ -30,10 +30,14 @@ trait Has_ArrayAccess {
 	/**
 	 * Sets a value based on the offset passed.
 	 *
-	 * @param string|int $offset
+	 * A null offset means `$collection[] = $value` — append semantics per
+	 * the ArrayAccess contract.
+	 *
+	 * @param string|int|null $offset
 	 * @param mixed $value
 	 * @return void
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetSet( $offset, $value ) {
 
 		if ( is_null( $offset ) ) {
@@ -49,6 +53,7 @@ trait Has_ArrayAccess {
 	 * @param string|int $offset
 	 * @return bool
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetExists( $offset ) {
 		return isset( $this->data[ $offset ] );
 	}
@@ -59,6 +64,7 @@ trait Has_ArrayAccess {
 	 * @param string|int $offset
 	 * @return void
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetUnset( $offset ) {
 		unset( $this->data[ $offset ] );
 	}
@@ -69,6 +75,7 @@ trait Has_ArrayAccess {
 	 * @param string|int $offset
 	 * @return mixed|null
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetGet( $offset ) {
 		return isset( $this->data[ $offset ] ) ? $this->data[ $offset ] : null;
 	}

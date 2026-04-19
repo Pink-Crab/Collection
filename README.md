@@ -1,11 +1,18 @@
 # PinkCrab Collection #
 
-![alt text](https://img.shields.io/badge/Current_Version-0.2.0-yellow.svg?style=flat " ") 
-[![Open Source Love](https://badges.frapsoft.com/os/mit/mit.svg?v=102)]()
-![](https://github.com/Pink-Crab/Collection/workflows/GitHub_CI/badge.svg " ")
-[![codecov](https://codecov.io/gh/Pink-Crab/collection/branch/master/graph/badge.svg?token=6tUeia2v2S)](https://codecov.io/gh/Pink-Crab/collection)
+[![Latest Stable Version](https://poser.pugx.org/pinkcrab/collection/v)](https://packagist.org/packages/pinkcrab/collection)
+[![Total Downloads](https://poser.pugx.org/pinkcrab/collection/downloads)](https://packagist.org/packages/pinkcrab/collection)
+[![License](https://poser.pugx.org/pinkcrab/collection/license)](https://packagist.org/packages/pinkcrab/collection)
+[![PHP Version Require](https://poser.pugx.org/pinkcrab/collection/require/php)](https://packagist.org/packages/pinkcrab/collection)
+![GitHub contributors](https://img.shields.io/github/contributors/Pink-Crab/Collection?label=Contributors)
+![GitHub issues](https://img.shields.io/github/issues-raw/Pink-Crab/Collection)
 
-## Version 0.2.0 ##
+[![Tests [PHP7.1-8.5]](https://github.com/Pink-Crab/Collection/actions/workflows/php.yaml/badge.svg)](https://github.com/Pink-Crab/Collection/actions/workflows/php.yaml)
+
+[![codecov](https://codecov.io/gh/Pink-Crab/collection/branch/master/graph/badge.svg?token=6tUeia2v2S)](https://codecov.io/gh/Pink-Crab/collection)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Pink-Crab/Collection/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Pink-Crab/Collection/?branch=master)
+
+## Version 1.0.0 ##
 
 > This library was extracted from the PinkCrab Plugin Framework (Perique)
 
@@ -15,7 +22,17 @@ Give access to a basic collection with all expected functionlaity, filtering, ma
 
 ## Install ##
 
-> `composer install pink-crab/collection`
+Install via Composer:
+
+```bash
+composer require pinkcrab/collection
+```
+
+Then include the Composer autoloader in your project:
+
+```php
+require_once __DIR__ . '/vendor/autoload.php';
+```
 
 ## Basic Useage ##
 
@@ -88,6 +105,7 @@ $collection->each(function($e){
 #### MIT License http://www.opensource.org/licenses/mit-license.html  
 
 ## Change Log ##
+* 1.0.0 - Raised supported PHP range to 7.1–8.5 and modernised the tooling chain (PHPStan 2.x + phpstan stubs so traits are actually analysed, PHPUnit up to 9.6, WPCS-based phpcs). Interface implementations (`ArrayAccess`, `Iterator`, `JsonSerializable`) marked with `#[\ReturnTypeWillChange]` for PHP 8.1+ without dropping PHP 7.x support. `Sequence::sum()` now filters non-numeric values to stay compatible with PHP 8.3's stricter `array_sum()`. Corrected phpdoc types on `Has_ArrayAccess::offsetSet` (nullable offset) and `Is_Iterable::key` (nullable return). **BC break:** public method parameters renamed `$function`/`$callable` → `$callback` on `apply()`, `each()`, `filter()`, `map()`, `reduce()`, `sort()`, `sorted()`, `group_by()` — positional callers unaffected, named-argument callers need to update.
 * 0.2.0 - Added in option callbacks for diff and intersect, complete with helper functions for checking based on object instance or values/type. Also includes the group_by() method.
 * 0.1.0 - Added Has_ArrayAccess and Is_Iterable traits to allow the implementation of the interfaces. Added docs from existing GitBook repo.
 * 0.0.0 - Extracted from the PinkCrab Plugin Framework as a standalone package.
