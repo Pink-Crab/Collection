@@ -6,7 +6,6 @@
     convertNoticesToExceptions="true"
     convertWarningsToExceptions="true"
     executionOrder="random"
-    
     >
     <testsuites>
         <testsuite name="core">
@@ -14,13 +13,9 @@
         </testsuite>
     </testsuites>
 
-     <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
+    <coverage processUncoveredFiles="true">
+        <include>
             <directory suffix=".php">./src/</directory>
-        </whitelist>
-    </filter>
-
-    <logging>
-        <log type="coverage-clover" target="coverage-report/logs/clover.xml"/>
-    </logging>
+        </include>
+    </coverage>
 </phpunit>
