@@ -135,8 +135,8 @@ By default, the initial value is an empty string, but this can be set as the sen
 ```php
 $collection = Collection::from([1,2,3,4]);
 echo $collection->reduce(function($carry, $value){
-        $carry .= ( $value * 2 );
-        return $carry;
+    $carry .= ( $value * 2 );
+    return $carry;
 }, ''); // 2468
 ```
 
