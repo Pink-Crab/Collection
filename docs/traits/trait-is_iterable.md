@@ -15,7 +15,7 @@ use PinkCrab\Collection\Collection;
 use PinkCrab\Collection\Traits\Is_Iterable;
 
 class Iterable_Collection extends Collection implements Iterator {
-	use Is_Iterable;
+    use Is_Iterable;
 }
 ```
 

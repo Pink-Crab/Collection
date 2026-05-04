@@ -15,7 +15,7 @@ use PinkCrab\Collection\Collection;
 use PinkCrab\Collection\Traits\Has_ArrayAccess;
 
 class Array_Collection extends Collection implements ArrayAccess {
-	use Has_ArrayAccess;
+    use Has_ArrayAccess;
 }
 ```
 

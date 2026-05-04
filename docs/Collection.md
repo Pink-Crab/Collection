@@ -90,13 +90,13 @@ The collection can be filtered into a new collection. It uses the regular array\
 ```php
 $initial_collection = Collection::from([1,2,3,4,5,6,7,8]);
 $filtered_collection = $initial_collection->filter(function( $e ) {
-	return $e % 2 === 0;
+    return $e % 2 === 0;
 });
 var_dump($filtered_collection); // 2, 4, 6, 8
 
 // Using both flag.
 $with_both = $initial_collection->filter(function( $value, $key ) {
-	return $key % 2 === 0;
+    return $key % 2 === 0;
 }, ARRAY_FILTER_USE_BOTH);
 var_dump($with_both); // 1, 3, 5, 7
 
@@ -135,8 +135,8 @@ By default, the initial value is an empty string, but this can be set as the sen
 ```php
 $collection = Collection::from([1,2,3,4]);
 echo $collection->reduce(function($carry, $value){
-		$carry .= ( $value * 2 );
-		return $carry;
+        $carry .= ( $value * 2 );
+        return $carry;
 }, ''); // 2468
 ```
 
@@ -305,7 +305,7 @@ var_dump($collection); // a, f, o, y, z
 $collection->sort(
   function( $a, $b ) {
      return $b <=> $a;
-	}
+    }
 );
 var_dump($collection); // z,y,o,f,a
 ```

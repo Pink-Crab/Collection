@@ -18,7 +18,7 @@ use PinkCrab\Collection\Traits\Sequence;
  * Custom class which uses the Sequence trait
  */
 class Sequence_Collection extends Collection {
-	use Sequence;
+    use Sequence;
 }
 ```
 
