@@ -57,7 +57,7 @@ The Collection package comes with a few Traits which can be used when creating c
 
 ```php
 $indexed_collection = new class() extends \PinkCrab\Collection\Collection {
-	use \PinkCrab\Collection\Traits\Indexed;
+    use \PinkCrab\Collection\Traits\Indexed;
 };
 
 $indexed_collection->set( 'key1', 'value1' );
@@ -67,7 +67,7 @@ var_dump( $indexed_collection );
 
 // As a full class.
 class Indexed_Collection extends \PinkCrab\Collection\Collection {
-	use \PinkCrab\Collection\Traits\Indexed;
+    use \PinkCrab\Collection\Traits\Indexed;
 };
 
 $indexed_collection = new Indexed_Collection();
@@ -83,17 +83,17 @@ var_dump( $indexed_collection );
 <?php
 
 class Post_Collection extends Collection {
-	// Filter out anything not matching.
-	protected function map_construct( array $data ): array {
-		return array_filter(fn($e): bool => is_a($data, \WP_Post::class));
-	}
+    // Filter out anything not matching.
+    protected function map_construct( array $data ): array {
+        return array_filter(fn($e): bool => is_a($data, \WP_Post::class));
+    }
 }
 
 $posts = Post_Collection::from([$post1, null, $post2, false, WP_Error]);
 var_dump($posts->to_array()); // [$post1, $post2];
 
 $collection->each(function($e){
-	print $e->post_title . PHP_EOL;
+    print $e->post_title . PHP_EOL;
 }); 
 // Post Title 1
 // Post Title 2

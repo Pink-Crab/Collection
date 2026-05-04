@@ -19,7 +19,7 @@ use PinkCrab\Collection\Traits\Indexed;
  * Custom class which uses the Indexed trait
  */
 class Indexed_Collection extends Collection {
-	use Indexed;
+    use Indexed;
 }
 ```
 
@@ -92,7 +92,7 @@ dump($collection->find(3)); // false
 // With objects. 
 
 $obj_a = new class(){
-	public $property = 'value';
+    public $property = 'value';
 };
 $obj_b = (object) array( 'property' => 'value' );
 
@@ -102,7 +102,7 @@ $obj_collection = new Indexed_Collection([
     'c' => $obj_a,
 ]);
 dump($collection->find($obj_a)); // 'a'
-dump($collection->find(new class(){	public $property = 'value';})); // false
+dump($collection->find(new class(){    public $property = 'value';})); // false
 ```
 
 ### Indexed::remove\(\)

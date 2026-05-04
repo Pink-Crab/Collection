@@ -16,7 +16,7 @@ use PinkCrab\Collection\Collection;
 use PinkCrab\Collection\Traits\Is_JsonSerializable;
 
 class Json_Serializeable_Collection extends Collection implements JsonSerializable {
-	use Is_JsonSerializable;
+    use Is_JsonSerializable;
 }
 ```
 
